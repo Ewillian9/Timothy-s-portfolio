@@ -1,0 +1,123 @@
+/* --- Reset (minimal, not preachy) --- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: system-ui, sans-serif;
+  background: #0f0f0f;
+  color: #f2f2f2;
+  line-height: 1.6;
+  padding-bottom: 64px; /* space for bottom nav */
+}
+
+/* --- Navigation --- */
+.nav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: #000;
+}
+
+.nav a {
+  color: #fff;
+  text-decoration: none;
+  padding: 1rem;
+  font-size: 0.9rem;
+}
+
+/* Top nav hidden on mobile */
+.nav-top {
+  display: none;
+}
+
+/* Bottom nav fixed on mobile */
+.nav-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-top: 1px solid #222;
+}
+
+/* --- Layout --- */
+main {
+  max-width: 720px;
+  margin: auto;
+}
+
+section {
+  padding: 3rem 1.25rem;
+}
+
+.hero {
+  text-align: center;
+  padding-top: 5rem;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* --- Components --- */
+.button {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.75rem 1.25rem;
+  border: 1px solid #fff;
+  color: #fff;
+  text-decoration: none;
+}
+
+.media-list {
+  list-style: none;
+}
+
+.media-list li {
+  margin-bottom: 0.75rem;
+}
+
+.media-list a {
+  color: #ccc;
+}
+
+.socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.socials a {
+  color: #fff;
+  border-bottom: 1px solid #444;
+  text-decoration: none;
+}
+
+/* --- Desktop breakpoint --- */
+@media (min-width: 768px) {
+  body {
+    padding-bottom: 0;
+  }
+
+  .nav-top {
+    display: flex;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .nav-bottom {
+    display: none;
+  }
+
+  .hero h1 {
+    font-size: 3.5rem;
+  }
+}
