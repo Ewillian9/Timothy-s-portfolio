@@ -11,10 +11,12 @@ html {
 
 body {
   font-family: system-ui, sans-serif;
-  background: #0f0f0f;
-  color: #f2f2f2;
+  background: #171717;
+  color: #e9dbc4;
   line-height: 1.6;
   padding-bottom: 64px; /* space for bottom nav */
+  max-width: 1280px;
+  margin: auto;
 }
 
 /* --- Navigation --- */
@@ -23,13 +25,12 @@ body {
   justify-content: space-around;
   align-items: center;
   background: #000;
-}
 
-.nav a {
-  color: #fff;
-  text-decoration: none;
-  padding: 1rem;
-  font-size: 0.9rem;
+  & a {
+    color: #e9dbc4;
+    text-decoration: none;
+    padding: 1rem;
+  }
 }
 
 /* Top nav hidden on mobile */
@@ -47,23 +48,52 @@ body {
 }
 
 /* --- Layout --- */
-main {
-  max-width: 720px;
+/* main {
   margin: auto;
+  max-width: 1280px;
+} */
+
+footer {
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.875rem;
+  color: #666;
+  border-top: 1px solid #222;
 }
 
 section {
   padding: 3rem 1.25rem;
+
+  & p {
+    text-align: center;
+    margin-top: 1rem;
+  }
+}
+
+.tvsl {
+  display: flex;
+  gap: 2rem;
+  flex-direction: column;
+}
+
+.concerts, .radio {
+  display: flex;
+  gap: 2rem;
+  flex-direction: column;
+}
+
+.about {
+  text-align: center;
 }
 
 .hero {
   text-align: center;
   padding-top: 5rem;
-}
 
-.hero h1 {
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
+  & h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
 }
 
 /* --- Components --- */
@@ -78,26 +108,50 @@ section {
 
 .media-list {
   list-style: none;
-}
 
-.media-list li {
-  margin-bottom: 0.75rem;
-}
+  & li {
+    margin-bottom: 0.75rem;
+  }
 
-.media-list a {
-  color: #ccc;
+  & a {
+    color: #ccc;
+  }
 }
 
 .socials {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
+
+  & a {
+    color: #fff;
+    border-bottom: 1px solid #444;
+    text-decoration: none;
+  }
 }
 
-.socials a {
-  color: #fff;
-  border-bottom: 1px solid #444;
-  text-decoration: none;
+/* --- Video --- */
+.video {
+  aspect-ratio: 16 / 9;
+  width: 100%;
+
+  & iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+}
+
+/* --- Gallery --- */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+
+  & img {
+    width: 100px;
+    object-fit: cover;
+  }
 }
 
 /* --- Desktop breakpoint --- */
@@ -117,7 +171,20 @@ section {
     display: none;
   }
 
-  .hero h1 {
-    font-size: 3.5rem;
+  .hero {
+    & h1 {
+      font-size: 3.5rem;
+    }
+  }
+
+  .tvsl {
+  flex-direction: row;
+  }
+  .concerts, .radio {
+    flex-direction: row;
+
+    & img {
+      width: 50%;
+    }
   }
 }
