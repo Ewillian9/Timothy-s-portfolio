@@ -24,7 +24,25 @@ main {
   flex: 1;
 }
 
-/* Top bar - socials like justinbiebermusic.com */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  background: #e9dbc4;
+  color: #0a0a0a;
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  z-index: 100;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* Top bar - socials */
 .top-bar {
   position: absolute;
   top: 0;
@@ -114,12 +132,11 @@ main {
 
 footer {
   text-align: center;
-  padding: 2rem 1rem;
+  padding: 1rem;
   font-size: 0.75rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   color: #999;
-  border-top: 1px solid #222;
 }
 
 section {
@@ -141,13 +158,6 @@ section {
 
 h2 {
   font-size: clamp(1.6rem, 4vw, 2rem);
-}
-
-.wip {
-  opacity: 0.6;
-  font-style: italic;
-  margin-top: 2rem;
-  text-align: center;
 }
 
 /* Music */
@@ -183,11 +193,21 @@ h2 {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 0.5rem;
+    align-items: stretch;
 
     & img {
       width: 100%;
+      height: auto;
+      object-fit: contain;
+      align-self: start;
+    }
+
+    & img.fill-cover {
+      height: 100%;
       aspect-ratio: 3/4;
       object-fit: cover;
+      object-position: top;
+      align-self: stretch;
     }
   }
 }
@@ -222,49 +242,7 @@ h2 {
   }
 }
 
-/* Stream links - Justin minimal */
-.stream-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: 2rem;
-  justify-content: center;
-}
-
-.stream-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 1.1rem;
-  border: 1px solid #2a2a2a;
-  color: #e9dbc4;
-  text-decoration: none;
-  font-size: 0.8rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  transition: all 0.2s ease;
-  min-width: 120px;
-  justify-content: center;
-  background: transparent;
-}
-
-.stream-btn:hover {
-  border-color: #e9dbc4;
-  background: rgba(233, 219, 196, 0.06);
-}
-
-.stream-icon {
-  width: 1.1rem;
-  height: 1.1rem;
-  object-fit: contain;
-}
-
-.stream-btn.tidal .stream-icon,
-.stream-btn.amazon .stream-icon {
-  filter: invert(1);
-}
-
-/* Videos carousel - Justin immersive */
+/* Videos carousel */
 .videos {
   text-align: center;
   max-width: 980px;
@@ -403,22 +381,19 @@ h2 {
   }
 }
 
-.button {
-  display: inline-block;
-  margin-top: 1.5rem;
-  padding: 0.75rem 1.5rem;
-  border: 1px solid #2a2a2a;
-  color: #e9dbc4;
-  text-decoration: none;
-  font-size: 0.8rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  transition: all 0.2s ease;
+.carousel-btn:focus-visible,
+.carousel-dot:focus-visible,
+.socials-top a:focus-visible,
+.skip-link:focus-visible {
+  outline: 2px solid #e9dbc4;
+  outline-offset: 2px;
 }
 
-.button:hover {
-  border-color: #e9dbc4;
-  background: rgba(233, 219, 196, 0.06);
+@supports not (mask-image: linear-gradient(#000, #000)) {
+  .hero {
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
 }
 
 @media (max-width: 768px) {
@@ -431,27 +406,6 @@ h2 {
     gap: 0.9rem;
     flex-wrap: wrap;
     justify-content: center;
-  }
-
-  .socials-top a {
-    font-size: 0.65rem;
-  }
-
-  .stream-links {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .stream-btn {
-    flex-direction: column;
-    gap: 0.25rem;
-    padding: 0.6rem;
-    width: 100%;
-    min-width: 0;
-  }
-
-  .stream-btn span {
-    display: none;
   }
 
   .carousel-btn {

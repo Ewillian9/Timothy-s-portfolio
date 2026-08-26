@@ -69,6 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
     dot.className = 'carousel-dot' + (i === 0 ? ' is-active' : '');
     dot.setAttribute('aria-label', `Go to video ${i + 1}`);
     dot.setAttribute('role', 'tab');
+    dot.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
     dot.addEventListener('click', () => goTo(i));
     dotsContainer.appendChild(dot);
   });
@@ -77,7 +78,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function update() {
     track.style.transform = `translateX(-${current * 100}%)`;
     slides.forEach((s, i) => s.classList.toggle('is-active', i === current));
-    dots.forEach((d, i) => d.classList.toggle('is-active', i === current));
+    dots.forEach((d, i) => {
+      d.classList.toggle('is-active', i === current);
+      d.setAttribute('aria-selected', i === current ? 'true' : 'false');
+    });
     renderPlatforms(current);
   }
 
