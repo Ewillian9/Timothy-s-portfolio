@@ -11,14 +11,14 @@ document.addEventListener('DOMContentLoaded', () => {
       mobileMenu.setAttribute('aria-hidden', !isOpen);
     });
 
-    // Close menu when clicking any link inside
-    mobileMenu.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
+    // Close menu when clicking in the empty space (backdrop)
+    mobileMenu.addEventListener('click', (e) => {
+      if (e.target === mobileMenu) {
         mobileMenu.classList.remove('is-open');
         burgerBtn.classList.remove('is-active');
         burgerBtn.setAttribute('aria-expanded', 'false');
         mobileMenu.setAttribute('aria-hidden', 'true');
-      });
+      }
     });
   }
 
