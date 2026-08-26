@@ -75,6 +75,15 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   const dots = document.querySelectorAll('.carousel-dot');
 
+  function pauseAllVideos() {
+    slides.forEach(slide => {
+      const iframe = slide.querySelector('iframe');
+      if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      }
+    });
+  }
+
   function update() {
     track.style.transform = `translateX(-${current * 100}%)`;
     slides.forEach((s, i) => s.classList.toggle('is-active', i === current));
@@ -86,6 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function goTo(index) {
+    pauseAllVideos();
     current = (index + total) % total;
     update();
   }
