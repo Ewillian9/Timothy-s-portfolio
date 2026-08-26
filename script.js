@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const platformsData = [
     {
-      label: 'Stream Khadhambariye on',
       links: [
         { href: 'https://open.spotify.com/track/6vWTmxhYT8RoSn99kNX6dJ', icon: 'assets/icons/spotify.svg', alt: 'Spotify' },
         { href: 'https://music.apple.com/us/song/khadhambariye/6794283060', icon: 'assets/icons/apple-music.svg', alt: 'Apple Music' },
@@ -22,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
       ]
     },
     {
-      label: 'Stream Arctic Eyes on',
       links: [
         { href: 'https://open.spotify.com/track/0f858Tv5lqvBkJzZuuSHed', icon: 'assets/icons/spotify.svg', alt: 'Spotify' },
         { href: 'https://music.apple.com/us/song/arctic-eyes/6789503937', icon: 'assets/icons/apple-music.svg', alt: 'Apple Music' },
@@ -32,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
       ]
     },
     {
-      label: 'Stream Akaalaye on',
       links: [
         { href: 'https://open.spotify.com/album/3Wz6p7cQdFck6ID5VZJcHZ', icon: 'assets/icons/spotify.svg', alt: 'Spotify' },
         { href: 'https://music.apple.com/us/album/akaalaye-single/1843887424', icon: 'assets/icons/apple-music.svg', alt: 'Apple Music' },
@@ -44,33 +41,28 @@ document.addEventListener('DOMContentLoaded', () => {
       ]
     },
     {
-      label: 'Watch on',
       links: [
         { href: 'https://www.youtube.com/watch?v=KHES7V8NitE&t=761s', icon: 'assets/icons/youtube.svg', alt: 'YouTube' },
       ]
     },
     {
-      label: 'Watch on',
       links: [
         { href: 'https://www.youtube.com/watch?v=lJmENTzfmZc&t=645s', icon: 'assets/icons/youtube.svg', alt: 'YouTube' },
       ]
     },
     {
-      label: 'Watch on',
       links: [
         { href: 'https://www.youtube.com/watch?v=0uJ6y27soEI&t=122s', icon: 'assets/icons/youtube.svg', alt: 'YouTube' },
       ]
     },
   ];
 
-  const platformsLabel = document.getElementById('carousel-platforms-label');
   const platformsLogos = document.getElementById('carousel-platforms-logos');
 
   function renderPlatforms(index) {
-    if (!platformsLabel || !platformsLogos) return;
+    if (!platformsLogos) return;
     const data = platformsData[index];
     if (!data) return;
-    platformsLabel.textContent = data.label;
     platformsLogos.innerHTML = data.links.map(l => `<a href="${l.href}" target="_blank" aria-label="${l.alt}"><img src="${l.icon}" alt="${l.alt}"></a>`).join('');
   }
 
