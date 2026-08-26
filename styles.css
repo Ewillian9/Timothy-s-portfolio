@@ -136,7 +136,7 @@ footer {
 }
 
 section {
-  padding: 5rem 1rem;
+  padding: 5rem 0.5rem;
   max-width: 980px;
   margin: auto;
   width: 100%;
@@ -397,9 +397,10 @@ h2 {
   }
 
   .socials-top {
-    gap: 0.9rem;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    gap: 0.8rem;
+    justify-items: center;
   }
 
   .carousel-btn {
