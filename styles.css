@@ -288,7 +288,7 @@ h2 {
 
 .carousel-btn {
   position: absolute;
-  top: 50%;
+  top: calc(50% - 14px);
   transform: translateY(-50%);
   background: rgba(0, 0, 0, 0.45);
   border: none;
@@ -308,11 +308,11 @@ h2 {
 }
 
 .carousel-btn.prev {
-  left: 12px;
+  left: 0;
 }
 
 .carousel-btn.next {
-  right: 12px;
+  right: 0;
 }
 
 .carousel-dots {
@@ -411,6 +411,7 @@ h2 {
   .carousel-btn {
     width: 36px;
     height: 36px;
+    top: calc(50% - 14px);
   }
 
   .platform-logos {
