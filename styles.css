@@ -51,9 +51,17 @@ main {
   max-width: 1280px;
   margin: auto;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: flex-start;
   padding: 1.2rem 1rem;
   z-index: 10;
+}
+
+.logo img {
+  height: 64px;
+  width: auto;
+  display: block;
+  filter: brightness(0) invert(0.92) sepia(0.1) saturate(0.2);
 }
 
 .socials-top {
@@ -84,19 +92,7 @@ main {
 
 .hero {
   min-height: 85vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  background: url("./assets/images/compressed-image.webp") center / contain no-repeat;
-  mask-image: linear-gradient(
-    to bottom,
-    #0a0a0a 0%,
-    #0a0a0a 60%,
-    #0a0a0a00 100%
-  );
-  padding: 6rem 1rem 2rem;
+  background: url("./assets/images/Greenfiestaevenpic_005.png") center / cover no-repeat;
 }
 
 .hero-kicker {
@@ -390,17 +386,14 @@ h2 {
   outline-offset: 2px;
 }
 
-@supports not (mask-image: linear-gradient(#000, #000)) {
-  .hero {
-    mask-image: none;
-    -webkit-mask-image: none;
-  }
-}
-
 @media (max-width: 768px) {
   .top-bar {
-    justify-content: center;
+    justify-content: space-between;
     padding: 1rem 0.5rem;
+  }
+
+  .logo img {
+    height: 48px;
   }
 
   .socials-top {
@@ -427,7 +420,7 @@ h2 {
 
 @media (min-width: 768px) {
   .hero {
-    background: url("./assets/images/compressed-image.webp") right center / contain no-repeat;
+    background: url("./assets/images/Greenfiestaevenpic_005.png") center / cover no-repeat;
   }
 
   .tvsl {
