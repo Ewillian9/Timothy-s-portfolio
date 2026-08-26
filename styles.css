@@ -112,7 +112,7 @@ main {
 }
 
 .hero {
-  min-height: 85vh;
+  min-height: 90vh;
   margin-top: 3rem;
   background: url("./assets/images/Greenfiestaevenpic_005.png") center / cover no-repeat;
   -webkit-mask-image:
