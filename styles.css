@@ -11,7 +11,7 @@ html {
 body {
   font-family: system-ui, -apple-system, sans-serif;
   background: #050505;
-  color: #e9dbc4;
+  color: #fff;
   line-height: 1.6;
   max-width: 1280px;
   margin: auto;
@@ -41,7 +41,7 @@ main {
   position: absolute;
   top: -100%;
   left: 1rem;
-  background: #e9dbc4;
+  background: #fff;
   color: #0a0a0a;
   padding: 0.5rem 1rem;
   font-size: 0.75rem;
@@ -70,11 +70,19 @@ main {
   z-index: 10;
 }
 
+.burger-btn {
+  display: none;
+}
+
+.mobile-menu {
+  display: none;
+}
+
 .logo img {
   height: 42px;
   width: auto;
   display: block;
-  filter: brightness(0) invert(0.92) sepia(0.1) saturate(0.2);
+  filter: invert(1);
 }
 
 .socials-top {
@@ -84,7 +92,7 @@ main {
 }
 
 .socials-top a {
-  color: #e9dbc4;
+  color: #fff;
   text-decoration: none;
   opacity: 0.85;
   transition: opacity 0.2s ease;
@@ -100,7 +108,7 @@ main {
   width: 18px;
   height: 18px;
   display: block;
-  filter: brightness(0) invert(0.92) sepia(0.1) saturate(0.2);
+  filter: invert(1);
 }
 
 .hero {
@@ -344,7 +352,7 @@ h2 {
 }
 
 .carousel-dot.is-active {
-  background: #e9dbc4;
+  background: #fff;
 }
 
 .carousel-platforms {
@@ -375,7 +383,7 @@ h2 {
     width: 28px;
     height: 28px;
     object-fit: contain;
-    filter: invert(1) brightness(1.1);
+    filter: invert(1);
   }
 }
 
@@ -383,7 +391,7 @@ h2 {
 .carousel-dot:focus-visible,
 .socials-top a:focus-visible,
 .skip-link:focus-visible {
-  outline: 2px solid #e9dbc4;
+  outline: 2px solid #fff;
   outline-offset: 2px;
 }
 
@@ -396,8 +404,17 @@ h2 {
 
 @media (max-width: 768px) {
   .top-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 100%;
+    display: flex;
     justify-content: space-between;
-    padding: 1rem 0.5rem;
+    align-items: center;
+    padding: 1.2rem 1.2rem;
+    box-sizing: border-box;
   }
 
   .logo img {
@@ -405,10 +422,96 @@ h2 {
   }
 
   .socials-top {
+    display: none;
+  }
+
+  .burger-btn {
     display: flex;
     flex-direction: column;
-    gap: 0.8rem;
+    justify-content: space-between;
+    width: 22px;
+    height: 16px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-left: auto;
+    z-index: 1000;
+    opacity: 0.85;
+    transition: opacity 0.2s ease;
+  }
+
+  .burger-btn:hover {
+    opacity: 1;
+  }
+
+  .burger-line {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: #fff;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  .burger-btn.is-active .burger-line:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .burger-btn.is-active .burger-line:nth-child(2) {
+    opacity: 0;
+  }
+
+  .burger-btn.is-active .burger-line:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  .mobile-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(10, 10, 10, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
     align-items: center;
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .mobile-menu.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .mobile-menu-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  .mobile-menu-content a {
+    opacity: 0.85;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+  }
+
+  .mobile-menu-content a:hover {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+
+  .mobile-menu-content a img {
+    width: 32px;
+    height: 32px;
+    display: block;
+    filter: invert(1);
   }
 
   .carousel-btn {
