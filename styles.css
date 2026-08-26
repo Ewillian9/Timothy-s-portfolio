@@ -362,10 +362,6 @@ h2 {
     width: 28px;
     height: 28px;
     object-fit: contain;
-  }
-
-  & a[href*="tidal.com"] img,
-  & a[href*="amazon"] img {
     filter: invert(1) brightness(1.1);
   }
 }
