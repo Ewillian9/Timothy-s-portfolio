@@ -58,7 +58,7 @@ main {
 }
 
 .logo img {
-  height: 64px;
+  height: 42px;
   width: auto;
   display: block;
   filter: brightness(0) invert(0.92) sepia(0.1) saturate(0.2);
@@ -388,14 +388,14 @@ h2 {
   }
 
   .logo img {
-    height: 48px;
+    height: 32px;
   }
 
   .socials-top {
-    display: grid;
-    grid-template-columns: repeat(2, auto);
+    display: flex;
+    flex-direction: column;
     gap: 0.8rem;
-    justify-items: center;
+    align-items: center;
   }
 
   .carousel-btn {
