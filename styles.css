@@ -397,9 +397,9 @@ h2 {
     object-fit: contain;
   }
 
-  & a:nth-child(6) img,
-  & a:nth-child(7) img {
-    filter: invert(1);
+  & a[href*="tidal.com"] img,
+  & a[href*="amazon"] img {
+    filter: invert(1) brightness(1.1);
   }
 }
 

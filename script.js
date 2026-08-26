@@ -15,9 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
       links: [
         { href: 'https://open.spotify.com/track/0f858Tv5lqvBkJzZuuSHed', icon: 'assets/icons/spotify.svg', alt: 'Spotify' },
         { href: 'https://music.apple.com/us/song/arctic-eyes/6789503937', icon: 'assets/icons/apple-music.svg', alt: 'Apple Music' },
-        { href: 'https://tidal.com/album/541878355', icon: 'assets/icons/tidal.svg', alt: 'Tidal' },
-        { href: 'https://music.amazon.com/albums/B0H8D2GTXM', icon: 'assets/icons/amazon-music.svg', alt: 'Amazon Music' },
         { href: 'https://music.youtube.com/watch?v=OPV2sNcmSuc&list=OLAK5uy_lqWewJAYblczilDdoKp_6btmX5j7UQv1s', icon: 'assets/icons/youtube-music.svg', alt: 'YouTube Music' },
+        { href: 'https://music.amazon.com/albums/B0H8D2GTXM', icon: 'assets/icons/amazon-music.svg', alt: 'Amazon Music' },
+        { href: 'https://tidal.com/album/541878355', icon: 'assets/icons/tidal.svg', alt: 'Tidal' },
       ]
     },
     {
@@ -25,11 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
       links: [
         { href: 'https://open.spotify.com/album/3Wz6p7cQdFck6ID5VZJcHZ', icon: 'assets/icons/spotify.svg', alt: 'Spotify' },
         { href: 'https://music.apple.com/us/album/akaalaye-single/1843887424', icon: 'assets/icons/apple-music.svg', alt: 'Apple Music' },
-        { href: 'https://www.deezer.com/us/album/831969221', icon: 'assets/icons/deezer.svg', alt: 'Deezer' },
         { href: 'https://music.youtube.com/watch?v=cNU_81ld8Rc', icon: 'assets/icons/youtube-music.svg', alt: 'YouTube Music' },
-        { href: 'https://soundcloud.com/isaactimothy/akaalaye', icon: 'assets/icons/soundcloud.svg', alt: 'SoundCloud' },
-        { href: 'https://tidal.com/album/464686077', icon: 'assets/icons/tidal.svg', alt: 'Tidal' },
         { href: 'https://music.amazon.com/albums/B0FTT4D9JB', icon: 'assets/icons/amazon-music.svg', alt: 'Amazon Music' },
+        { href: 'https://soundcloud.com/isaactimothy/akaalaye', icon: 'assets/icons/soundcloud.svg', alt: 'SoundCloud' },
+        { href: 'https://www.deezer.com/us/album/831969221', icon: 'assets/icons/deezer.svg', alt: 'Deezer' },
+        { href: 'https://tidal.com/album/464686077', icon: 'assets/icons/tidal.svg', alt: 'Tidal' },
       ]
     },
     {
