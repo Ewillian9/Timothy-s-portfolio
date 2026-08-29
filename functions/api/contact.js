@@ -5,12 +5,36 @@ export async function onRequestPost({ request, env }) {
       return new Response(JSON.stringify({ error: "Missing required fields: name, email, subject, message" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
 
+    const escapeHtml = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#x27;");
+    const containsHarmful = (s) => {
+      if (!s) return false;
+      if (/<\s*(script|iframe|object|embed|form|img|svg|link|style|meta|base)\b/i.test(s)) return true;
+      if (/javascript\s*:/i.test(s) || /data\s*:\s*text\/html/i.test(s) || /vbscript\s*:/i.test(s)) return true;
+      if (/on\w+\s*=\s*["']?[^"'\s>]+/i.test(s)) return true;
+      if (/```|<\s*code\b/i.test(s)) return true;
+      const blocked = ['exe','bat','sh','msi','dmg','dll','so','zip','rar','tar','gz','7z','js','mjs','cjs','ts','tsx','py','php','pl','rb','rs','go','java','c','cpp','cs','html','htm','css','svg','png','jpg','jpeg','gif','webp','bmp','ico','tiff','psd','ai','sketch','ps1','cmd','com','scr','vbs','jar','apk','ipa'];
+      const urlRe = new RegExp(`(?:https?:\\/\\/|www\\.)[^\\s]+\\.(${blocked.join('|')})(?:[?#][^\\s]*)?\\b`, 'i');
+      if (urlRe.test(s)) return true;
+      return false;
+    };
+
+    // basic email format
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return new Response(JSON.stringify({ error: "Invalid email format" }), { status: 400, headers: { "Content-Type": "application/json" } });
+    }
+    // block harmful content (links to exe/image/code, script, etc.)
+    for (const [field, val] of [["name", name], ["subject", userSubject], ["message", message]]) {
+      if (containsHarmful(val)) {
+        return new Response(JSON.stringify({ error: `Harmful content detected in ${field} (links to exe/image/code or script not allowed)` }), { status: 400, headers: { "Content-Type": "application/json" } });
+      }
+    }
+
     const to = "janonguittard@gmail.com";
     const safeName = name.replace(/[\r\n"<>,;:\\]/g, "").trim().slice(0, 80) || "Website Contact";
     const from = `${safeName} <contact@ewii.site>`;
     const subject = userSubject;
     const text = `${message}\n\n--\nName: ${name}\nEmail: ${email}\nPhone: ${phone || "-"}`;
-    const html = `<p>${message.replace(/\n/g, "<br>")}</p><hr><p><strong>Name:</strong> ${name}<br><strong>Email:</strong> ${email}<br><strong>Phone:</strong> ${phone || "-"}</p>`;
+    const html = `<p>${escapeHtml(message).replace(/\n/g, "<br>")}</p><hr><p><strong>Name:</strong> ${escapeHtml(name)}<br><strong>Email:</strong> ${escapeHtml(email)}<br><strong>Phone:</strong> ${escapeHtml(phone || "-")}</p>`;
 
     if (phone) {
       const normalized = phone.replace(/[\s\-\(\)]/g, "");

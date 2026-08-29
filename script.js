@@ -59,12 +59,46 @@ document.addEventListener('DOMContentLoaded', () => {
       // reset helper
       contactForm.addEventListener('reset', () => setTimeout(updateCount, 0));
     }
+    const nameInputEarly = contactForm.querySelector('#contact-name');
+    const emailInputEarly = contactForm.querySelector('#contact-email');
+    const subjectInputEarly = contactForm.querySelector('#contact-subject');
+    if (nameInputEarly) nameInputEarly.addEventListener('input', () => nameInputEarly.setCustomValidity(""));
+    if (emailInputEarly) emailInputEarly.addEventListener('input', () => emailInputEarly.setCustomValidity(""));
+    if (subjectInputEarly) subjectInputEarly.addEventListener('input', () => subjectInputEarly.setCustomValidity(""));
     if (phoneField) phoneField.addEventListener('input', () => phoneField.setCustomValidity(""));
+    if (messageField) messageField.addEventListener('input', () => messageField.setCustomValidity(""));
+
+    const containsHarmful = (s) => {
+      if (!s) return false;
+      if (/<\s*(script|iframe|object|embed|form|img|svg|link|style|meta|base)\b/i.test(s)) return true;
+      if (/javascript\s*:/i.test(s) || /data\s*:\s*text\/html/i.test(s)) return true;
+      if (/on\w+\s*=\s*["']?/i.test(s)) return true;
+      if (/```|<\s*code\b/i.test(s)) return true;
+      const blocked = ['exe','bat','sh','msi','dmg','dll','zip','rar','tar','gz','7z','js','mjs','cjs','ts','tsx','py','php','pl','rb','rs','go','java','c','cpp','cs','html','htm','css','svg','png','jpg','jpeg','gif','webp','bmp','ico'];
+      const re = new RegExp(`(?:https?:\\/\\/|www\\.)[^\\s]+\\.(${blocked.join('|')})(?:[?#][^\\s]*)?\\b`, 'i');
+      return re.test(s);
+    };
 
     contactForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      const nameInput = contactForm.querySelector('#contact-name');
+      const emailInput = contactForm.querySelector('#contact-email');
+      const subjectInput = contactForm.querySelector('#contact-subject');
       const phoneInput = contactForm.querySelector('#contact-phone');
+      const nameVal = nameInput.value.trim();
+      const emailVal = emailInput.value.trim();
+      const subjectVal = subjectInput.value.trim();
       const phoneVal = phoneInput.value.trim();
+      const msgVal = messageField ? messageField.value : "";
+
+      if (nameVal.length > 80) { nameInput.setCustomValidity("Name must be 80 characters or less"); nameInput.reportValidity(); return; } else nameInput.setCustomValidity("");
+      if (emailVal.length > 254) { emailInput.setCustomValidity("Email must be 254 characters or less"); emailInput.reportValidity(); return; } else emailInput.setCustomValidity("");
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) { emailInput.setCustomValidity("Invalid email"); emailInput.reportValidity(); return; } else emailInput.setCustomValidity("");
+      if (subjectVal.length > 150) { subjectInput.setCustomValidity("Subject must be 150 characters or less"); subjectInput.reportValidity(); return; } else subjectInput.setCustomValidity("");
+      if (msgVal.length > 1000) { if (messageField) { messageField.setCustomValidity("Message must be 1000 characters or less"); messageField.reportValidity(); } return; } else if (messageField) messageField.setCustomValidity("");
+      for (const [field, val, el] of [["name", nameVal, nameInput], ["subject", subjectVal, subjectInput], ["message", msgVal, messageField]]) {
+        if (containsHarmful(val)) { el.setCustomValidity("Links to exe/image/code or script not allowed"); el.reportValidity(); return; } else el.setCustomValidity("");
+      }
       if (phoneVal) {
         const normalized = phoneVal.replace(/[\s\-\(\)]/g, "");
         if (!/^\+\d{7,15}$/.test(normalized)) {
@@ -74,16 +108,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
           phoneInput.setCustomValidity("");
         }
-      }
-      const msgVal = messageField ? messageField.value : "";
-      if (msgVal.length > 1000) {
-        if (messageField) {
-          messageField.setCustomValidity("Message must be 1000 characters or less");
-          messageField.reportValidity();
-        }
-        return;
-      } else if (messageField) {
-        messageField.setCustomValidity("");
       }
       const btn = contactForm.querySelector('button[type="submit"]');
       const orig = btn.textContent;
@@ -106,13 +130,24 @@ document.addEventListener('DOMContentLoaded', () => {
           charCount.textContent = '0/1000';
           messageField.style.height = 'auto';
         }
-        setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 3000);
+        setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 6000);
       } catch (err) {
         const msg = err.message || 'Error - try again';
         btn.textContent = msg.includes("country code") || msg.includes("1000") ? msg : 'Error - try again';
         btn.disabled = false;
-        setTimeout(() => btn.textContent = orig, 3000);
+        setTimeout(() => btn.textContent = orig, 6000);
       }
+    });
+  }
+
+  // Newsletter - block harmful links in email field (Kit.com handles backend)
+  const newsletterForm = document.querySelector('.newsletter-form');
+  if (newsletterForm) {
+    newsletterForm.addEventListener('submit', (e) => {
+      const email = newsletterForm.querySelector('input[type="email"]');
+      if (email && email.value.length > 254) { email.setCustomValidity("Email too long"); email.reportValidity(); e.preventDefault(); return; }
+      if (email && /https?:\/\//i.test(email.value)) { email.setCustomValidity("Links not allowed in email"); email.reportValidity(); e.preventDefault(); return; }
+      email.setCustomValidity("");
     });
   }
 
