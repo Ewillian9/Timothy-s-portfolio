@@ -7,7 +7,7 @@ export async function onRequestPost({ request, env }) {
 
     const to = "janonguittard@gmail.com";
     const safeName = name.replace(/[\r\n"<>,;:\\]/g, "").trim().slice(0, 80) || "Website Contact";
-    const from = `${safeName} <noreply@ewii.site>`;
+    const from = `${safeName} <contact@ewii.site>`;
     const subject = userSubject;
     const text = `${message}\n\n--\nName: ${name}\nEmail: ${email}\nPhone: ${phone || "-"}`;
     const html = `<p>${message.replace(/\n/g, "<br>")}</p><hr><p><strong>Name:</strong> ${name}<br><strong>Email:</strong> ${email}<br><strong>Phone:</strong> ${phone || "-"}</p>`;
