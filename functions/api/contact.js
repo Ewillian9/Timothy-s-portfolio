@@ -9,8 +9,8 @@ export async function onRequestPost({ request, env }) {
     const safeName = name.replace(/[\r\n"<>,;:\\]/g, "").trim().slice(0, 80) || "Website Contact";
     const from = `${safeName} <noreply@ewii.site>`;
     const subject = userSubject;
-    const text = `Name: ${name}\nEmail: ${email}\nPhone: ${phone || "-"}\n\n${message}`;
-    const html = `<p><strong>Name:</strong> ${name}<br><strong>Email:</strong> ${email}<br><strong>Phone:</strong> ${phone || "-"}</p><p>${message.replace(/\n/g, "<br>")}</p>`;
+    const text = `${message}\n\n--\nName: ${name}\nEmail: ${email}\nPhone: ${phone || "-"}`;
+    const html = `<p>${message.replace(/\n/g, "<br>")}</p><hr><p><strong>Name:</strong> ${name}<br><strong>Email:</strong> ${email}<br><strong>Phone:</strong> ${phone || "-"}</p>`;
 
     if (phone) {
       const normalized = phone.replace(/[\s\-\(\)]/g, "");
