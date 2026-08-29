@@ -319,10 +319,11 @@ section {
 }
 
 .contact-form .form-row textarea {
-  resize: none;
+  resize: none !important;
   overflow-y: hidden;
   min-height: 120px;
   box-sizing: border-box;
+  field-sizing: content;
 }
 
 .char-count {
