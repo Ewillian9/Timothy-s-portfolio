@@ -6,7 +6,8 @@ export async function onRequestPost({ request, env }) {
     }
 
     const to = "janonguittard@gmail.com";
-    const from = "noreply@ewii.site";
+    const safeName = name.replace(/[\r\n"<>,;:\\]/g, "").trim().slice(0, 80) || "Website Contact";
+    const from = `${safeName} <noreply@ewii.site>`;
     const subject = `${userSubject} — from ${name} via isaactimothylk.ewii.site`;
     const text = `Name: ${name}\nEmail: ${email}\nPhone: ${phone || "-"}\nSubject: ${userSubject}\n\n${message}`;
     const html = `<p><strong>Name:</strong> ${name}<br><strong>Email:</strong> ${email}<br><strong>Phone:</strong> ${phone || "-"}<br><strong>Subject:</strong> ${userSubject}</p><p>${message.replace(/\n/g, "<br>")}</p>`;
@@ -36,7 +37,7 @@ export async function onRequestPost({ request, env }) {
       const res = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ from: `Website Contact <${from}>`, to: [to], reply_to: email, subject, text }),
+        body: JSON.stringify({ from, to: [to], reply_to: email, subject, text }),
       });
       if (!res.ok) {
         const txt = await res.text();
