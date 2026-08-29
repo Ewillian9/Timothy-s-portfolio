@@ -5,7 +5,7 @@ export async function onRequestPost({ request, env }) {
       return new Response(JSON.stringify({ error: "Missing fields" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
 
-    const to = "hello@ewii.site";
+    const to = "janonguittard@gmail.com";
     const from = "noreply@ewii.site";
     const subject = `New message from ${name} via isaactimothylk.ewii.site`;
     const text = `Name: ${name}\nEmail: ${email}\n\n${message}`;
