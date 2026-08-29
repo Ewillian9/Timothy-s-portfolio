@@ -1,15 +1,15 @@
 export async function onRequestPost({ request, env }) {
   try {
-    const { name, email, message } = await request.json();
-    if (!name || !email || !message) {
-      return new Response(JSON.stringify({ error: "Missing fields" }), { status: 400, headers: { "Content-Type": "application/json" } });
+    const { name, email, subject: userSubject, phone, message } = await request.json();
+    if (!name || !email || !userSubject || !message) {
+      return new Response(JSON.stringify({ error: "Missing required fields: name, email, subject, message" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
 
     const to = "janonguittard@gmail.com";
     const from = "noreply@ewii.site";
-    const subject = `New message from ${name} via isaactimothylk.ewii.site`;
-    const text = `Name: ${name}\nEmail: ${email}\n\n${message}`;
-    const html = `<p><strong>Name:</strong> ${name}<br><strong>Email:</strong> ${email}</p><p>${message.replace(/\n/g, "<br>")}</p>`;
+    const subject = `${userSubject} — from ${name} via isaactimothylk.ewii.site`;
+    const text = `Name: ${name}\nEmail: ${email}\nPhone: ${phone || "-"}\nSubject: ${userSubject}\n\n${message}`;
+    const html = `<p><strong>Name:</strong> ${name}<br><strong>Email:</strong> ${email}<br><strong>Phone:</strong> ${phone || "-"}<br><strong>Subject:</strong> ${userSubject}</p><p>${message.replace(/\n/g, "<br>")}</p>`;
 
     // 1) Native Cloudflare Email Service binding (recommended) - add send_email binding named EMAIL in Pages > Settings > Functions
     if (env.EMAIL && env.EMAIL.send) {
@@ -45,7 +45,7 @@ export async function onRequestPost({ request, env }) {
       return new Response(JSON.stringify({ ok: true, via: "resend" }), { status: 200, headers: { "Content-Type": "application/json" } });
     }
 
-    return new Response(JSON.stringify({ error: "No email service configured - add EMAIL binding or CLOUDFLARE_API_TOKEN+ACCOUNT_ID or RESEND_API_KEY", debug: { keys: Object.keys(env || {}), hasAccount: !!env.CLOUDFLARE_ACCOUNT_ID, hasToken: !!env.CLOUDFLARE_API_TOKEN, accountLen: env.CLOUDFLARE_ACCOUNT_ID?.length, tokenLen: env.CLOUDFLARE_API_TOKEN?.length, hasEmail: !!env.EMAIL } }), { status: 500, headers: { "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ error: "No email service configured - add EMAIL binding or CLOUDFLARE_API_TOKEN+ACCOUNT_ID or RESEND_API_KEY" }), { status: 500, headers: { "Content-Type": "application/json" } });
   } catch (e) {
     return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: { "Content-Type": "application/json" } });
   }
