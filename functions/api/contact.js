@@ -8,9 +8,16 @@ export async function onRequestPost({ request, env }) {
     const to = "janonguittard@gmail.com";
     const safeName = name.replace(/[\r\n"<>,;:\\]/g, "").trim().slice(0, 80) || "Website Contact";
     const from = `${safeName} <noreply@ewii.site>`;
-    const subject = `${userSubject} — from ${name} via isaactimothylk.ewii.site`;
-    const text = `Name: ${name}\nEmail: ${email}\nPhone: ${phone || "-"}\nSubject: ${userSubject}\n\n${message}`;
-    const html = `<p><strong>Name:</strong> ${name}<br><strong>Email:</strong> ${email}<br><strong>Phone:</strong> ${phone || "-"}<br><strong>Subject:</strong> ${userSubject}</p><p>${message.replace(/\n/g, "<br>")}</p>`;
+    const subject = userSubject;
+    const text = `Name: ${name}\nEmail: ${email}\nPhone: ${phone || "-"}\n\n${message}`;
+    const html = `<p><strong>Name:</strong> ${name}<br><strong>Email:</strong> ${email}<br><strong>Phone:</strong> ${phone || "-"}</p><p>${message.replace(/\n/g, "<br>")}</p>`;
+
+    if (phone) {
+      const normalized = phone.replace(/[\s\-\(\)]/g, "");
+      if (!/^\+\d{7,15}$/.test(normalized)) {
+        return new Response(JSON.stringify({ error: "Phone must include country code, e.g. +94771234567" }), { status: 400, headers: { "Content-Type": "application/json" } });
+      }
+    }
 
     // 1) Native Cloudflare Email Service binding (recommended) - add send_email binding named EMAIL in Pages > Settings > Functions
     if (env.EMAIL && env.EMAIL.send) {

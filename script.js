@@ -47,6 +47,18 @@ document.addEventListener('DOMContentLoaded', () => {
   if (contactForm) {
     contactForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      const phoneInput = contactForm.querySelector('#contact-phone');
+      const phoneVal = phoneInput.value.trim();
+      if (phoneVal) {
+        const normalized = phoneVal.replace(/[\s\-\(\)]/g, "");
+        if (!/^\+\d{7,15}$/.test(normalized)) {
+          phoneInput.setCustomValidity("Include country code, e.g. +94771234567");
+          phoneInput.reportValidity();
+          return;
+        } else {
+          phoneInput.setCustomValidity("");
+        }
+      }
       const btn = contactForm.querySelector('button[type="submit"]');
       const orig = btn.textContent;
       btn.textContent = 'Sending...';
@@ -58,16 +70,22 @@ document.addEventListener('DOMContentLoaded', () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data),
         });
-        if (!res.ok) throw new Error('Failed');
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error || 'Failed');
+        }
         btn.textContent = 'Sent ✓';
         contactForm.reset();
         setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 3000);
-      } catch {
-        btn.textContent = 'Error - try again';
+      } catch (err) {
+        btn.textContent = err.message.includes("country code") ? err.message : 'Error - try again';
         btn.disabled = false;
         setTimeout(() => btn.textContent = orig, 3000);
       }
     });
+    // clear custom validity on input
+    const phoneField = document.getElementById('contact-phone');
+    if (phoneField) phoneField.addEventListener('input', () => phoneField.setCustomValidity(""));
   }
 
   const track = document.querySelector('.carousel-track');
