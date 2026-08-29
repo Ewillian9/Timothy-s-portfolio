@@ -5,43 +5,47 @@ export async function onRequestPost({ request, env }) {
       return new Response(JSON.stringify({ error: "Missing fields" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
 
-    // Prefer Resend if API key is set (MailChannels free tier closed 2024)
+    const to = "hello@ewii.site";
+    const from = "noreply@ewii.site";
+    const subject = `New message from ${name} via isaactimothylk.ewii.site`;
+    const text = `Name: ${name}\nEmail: ${email}\n\n${message}`;
+    const html = `<p><strong>Name:</strong> ${name}<br><strong>Email:</strong> ${email}</p><p>${message.replace(/\n/g, "<br>")}</p>`;
+
+    // 1) Native Cloudflare Email Service binding (recommended) - add send_email binding named EMAIL in Pages > Settings > Functions
+    if (env.EMAIL && env.EMAIL.send) {
+      const res = await env.EMAIL.send({ to, from, subject, text, html, replyTo: email });
+      return new Response(JSON.stringify({ ok: true, via: "binding", id: res.messageId }), { status: 200, headers: { "Content-Type": "application/json" } });
+    }
+
+    // 2) Cloudflare Email Service REST API - set CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN (Email Sending: Edit)
+    if (env.CLOUDFLARE_ACCOUNT_ID && env.CLOUDFLARE_API_TOKEN) {
+      const res = await fetch(`https://api.cloudflare.com/client/v4/accounts/${env.CLOUDFLARE_ACCOUNT_ID}/email/sending/send`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${env.CLOUDFLARE_API_TOKEN}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ to, from, subject, text, html }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        return new Response(JSON.stringify({ error: "Cloudflare Email API failed", detail: data }), { status: 502, headers: { "Content-Type": "application/json" } });
+      }
+      return new Response(JSON.stringify({ ok: true, via: "rest", result: data.result }), { status: 200, headers: { "Content-Type": "application/json" } });
+    }
+
+    // 3) Fallback Resend (if you prefer)
     if (env.RESEND_API_KEY) {
       const res = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json" },
-        body: JSON.stringify({
-          from: "Website Contact <noreply@ewii.site>",
-          to: ["hello@ewii.site"],
-          reply_to: email,
-          subject: `New message from ${name} via isaactimothylk.ewii.site`,
-          text: `Name: ${name}\nEmail: ${email}\n\n${message}`,
-        }),
+        body: JSON.stringify({ from: `Website Contact <${from}>`, to: [to], reply_to: email, subject, text }),
       });
       if (!res.ok) {
         const txt = await res.text();
         return new Response(JSON.stringify({ error: "Resend failed", detail: txt }), { status: 502, headers: { "Content-Type": "application/json" } });
       }
-      return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ ok: true, via: "resend" }), { status: 200, headers: { "Content-Type": "application/json" } });
     }
 
-    // Fallback: MailChannels (will 502 if domain not allowed)
-    const res = await fetch("https://api.mailchannels.net/tx/v1/send", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        personalizations: [{ to: [{ email: "hello@ewii.site", name: "Isaac Timothy" }] }],
-        from: { email: "noreply@ewii.site", name: "Website Contact" },
-        reply_to: { email, name },
-        subject: `New message from ${name} via isaactimothylk.ewii.site`,
-        content: [{ type: "text/plain", value: `Name: ${name}\nEmail: ${email}\n\n${message}` }],
-      }),
-    });
-    if (!res.ok) {
-      const txt = await res.text();
-      return new Response(JSON.stringify({ error: "MailChannels failed - add RESEND_API_KEY", detail: txt }), { status: 502, headers: { "Content-Type": "application/json" } });
-    }
-    return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ error: "No email service configured - add EMAIL binding or CLOUDFLARE_API_TOKEN+ACCOUNT_ID or RESEND_API_KEY" }), { status: 500, headers: { "Content-Type": "application/json" } });
   } catch (e) {
     return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: { "Content-Type": "application/json" } });
   }
