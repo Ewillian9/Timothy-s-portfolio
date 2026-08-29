@@ -19,6 +19,15 @@ export async function onRequestPost({ request, env }) {
       }
     }
 
+    if (name.length > 80) {
+      return new Response(JSON.stringify({ error: "Name must be 80 characters or less" }), { status: 400, headers: { "Content-Type": "application/json" } });
+    }
+    if (email.length > 254) {
+      return new Response(JSON.stringify({ error: "Email must be 254 characters or less" }), { status: 400, headers: { "Content-Type": "application/json" } });
+    }
+    if (userSubject.length > 150) {
+      return new Response(JSON.stringify({ error: "Subject must be 150 characters or less" }), { status: 400, headers: { "Content-Type": "application/json" } });
+    }
     if (message.length > 1000) {
       return new Response(JSON.stringify({ error: "Message must be 1000 characters or less" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
