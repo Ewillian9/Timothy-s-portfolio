@@ -96,6 +96,44 @@
 	  <p>I’m not here to fit into a genre, a formula, or what a Sri Lankan artist is expected to sound like.<br>I’m here to find out what comes next.</p>
         </section>
 
+        <section class="newsletter" id="newsletter">
+          <h2 class="section-title" style="font-weight:700">WANT TO HEAR IT FIRST?</h2>
+          <!-- Kit.com integration: replace action with your Kit form URL -->
+          <form class="newsletter-form" action="https://app.kit.com/forms/XXXX/subscriptions" method="post" data-sv-form="XXXX">
+            <label for="newsletter-email" class="visually-hidden">Email address</label>
+            <input type="email" id="newsletter-email" name="email_address" placeholder="Enter your email" required autocomplete="email">
+            <button type="submit" class="btn-submit">Get Updates</button>
+          </form>
+        </section>
+
+        <section class="contact" id="contact">
+          <button class="contact-toggle" aria-expanded="false" aria-controls="contact-panel">
+            <h2 class="section-title" style="font-weight:700; margin-bottom:0">CONTACT</h2>
+            <span class="contact-toggle-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="contact-panel" id="contact-panel" hidden>
+            <div class="contact-panel-inner">
+              <p class="form-hint" style="margin-top:0; margin-bottom:1rem">For bookings, collaborations, press &amp; general enquiries</p>
+              <!-- Cloudflare: create something@customdomain.com -> artist@gmail.com in Email Routing, then create a Worker / Pages Function at /api/contact that forwards form POST to that address (see note below) -->
+              <form class="contact-form" id="contact-form" action="/api/contact" method="POST">
+              <div class="form-row">
+                <label for="contact-name" class="visually-hidden">Name</label>
+                <input type="text" id="contact-name" name="name" placeholder="Name" required autocomplete="name">
+              </div>
+              <div class="form-row">
+                <label for="contact-email" class="visually-hidden">Email</label>
+                <input type="email" id="contact-email" name="email" placeholder="Email" required autocomplete="email">
+              </div>
+              <div class="form-row">
+                <label for="contact-message" class="visually-hidden">Message</label>
+                <textarea id="contact-message" name="message" placeholder="Message" rows="5" required></textarea>
+              </div>
+              <button type="submit" class="btn-submit">Send Message</button>
+              </form>
+            </div>
+          </div>
+        </section>
+
       </main>
 
       <footer>

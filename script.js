@@ -22,6 +22,54 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Contact accordion
+  const contactToggle = document.querySelector('.contact-toggle');
+  const contactPanel = document.getElementById('contact-panel');
+  if (contactToggle && contactPanel) {
+    contactToggle.addEventListener('click', () => {
+      const isOpen = contactToggle.getAttribute('aria-expanded') === 'true';
+      contactToggle.setAttribute('aria-expanded', String(!isOpen));
+      if (!isOpen) {
+        contactPanel.hidden = false;
+        // allow hidden removal to paint before transition
+        requestAnimationFrame(() => contactPanel.classList.add('is-open'));
+      } else {
+        contactPanel.classList.remove('is-open');
+        contactPanel.addEventListener('transitionend', () => {
+          if (!contactPanel.classList.contains('is-open')) contactPanel.hidden = true;
+        }, { once: true });
+      }
+    });
+  }
+
+  // Contact form - send without mail client via Cloudflare Worker/Function
+  const contactForm = document.getElementById('contact-form');
+  if (contactForm) {
+    contactForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = contactForm.querySelector('button[type="submit"]');
+      const orig = btn.textContent;
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+      try {
+        const data = Object.fromEntries(new FormData(contactForm).entries());
+        const res = await fetch(contactForm.action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+        if (!res.ok) throw new Error('Failed');
+        btn.textContent = 'Sent ✓';
+        contactForm.reset();
+        setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 3000);
+      } catch {
+        btn.textContent = 'Error - try again';
+        btn.disabled = false;
+        setTimeout(() => btn.textContent = orig, 3000);
+      }
+    });
+  }
+
   const track = document.querySelector('.carousel-track');
   const slides = document.querySelectorAll('.carousel-slide');
   const prevBtn = document.querySelector('.carousel-btn.prev');
