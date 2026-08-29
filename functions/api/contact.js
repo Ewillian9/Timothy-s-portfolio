@@ -22,7 +22,7 @@ export async function onRequestPost({ request, env }) {
       const res = await fetch(`https://api.cloudflare.com/client/v4/accounts/${env.CLOUDFLARE_ACCOUNT_ID}/email/sending/send`, {
         method: "POST",
         headers: { Authorization: `Bearer ${env.CLOUDFLARE_API_TOKEN}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ to, from, subject, text, html }),
+        body: JSON.stringify({ to, from, subject, text, html, reply_to: email }),
       });
       const data = await res.json();
       if (!res.ok || !data.success) {
