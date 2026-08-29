@@ -314,6 +314,21 @@ section {
   resize: vertical;
 }
 
+.contact-form .form-row textarea {
+  resize: none;
+  overflow-y: hidden;
+  min-height: 120px;
+}
+
+.char-count {
+  display: block;
+  text-align: right;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  color: #666;
+  margin-top: 0.35rem;
+}
+
 .contact-form .form-row input::placeholder,
 .contact-form .form-row textarea::placeholder {
   color: #777;

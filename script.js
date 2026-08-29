@@ -45,6 +45,22 @@ document.addEventListener('DOMContentLoaded', () => {
   // Contact form - send without mail client via Cloudflare Worker/Function
   const contactForm = document.getElementById('contact-form');
   if (contactForm) {
+    const messageField = document.getElementById('contact-message');
+    const charCount = document.getElementById('contact-char-count');
+    const phoneField = document.getElementById('contact-phone');
+    if (messageField && charCount) {
+      const updateCount = () => {
+        charCount.textContent = `${messageField.value.length}/1000`;
+        messageField.style.height = 'auto';
+        messageField.style.height = messageField.scrollHeight + 'px';
+      };
+      messageField.addEventListener('input', updateCount);
+      updateCount();
+      // reset helper
+      contactForm.addEventListener('reset', () => setTimeout(updateCount, 0));
+    }
+    if (phoneField) phoneField.addEventListener('input', () => phoneField.setCustomValidity(""));
+
     contactForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const phoneInput = contactForm.querySelector('#contact-phone');
@@ -58,6 +74,16 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
           phoneInput.setCustomValidity("");
         }
+      }
+      const msgVal = messageField ? messageField.value : "";
+      if (msgVal.length > 1000) {
+        if (messageField) {
+          messageField.setCustomValidity("Message must be 1000 characters or less");
+          messageField.reportValidity();
+        }
+        return;
+      } else if (messageField) {
+        messageField.setCustomValidity("");
       }
       const btn = contactForm.querySelector('button[type="submit"]');
       const orig = btn.textContent;
@@ -76,16 +102,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         btn.textContent = 'Sent ✓';
         contactForm.reset();
+        if (messageField && charCount) {
+          charCount.textContent = '0/1000';
+          messageField.style.height = 'auto';
+        }
         setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 3000);
       } catch (err) {
-        btn.textContent = err.message.includes("country code") ? err.message : 'Error - try again';
+        const msg = err.message || 'Error - try again';
+        btn.textContent = msg.includes("country code") || msg.includes("1000") ? msg : 'Error - try again';
         btn.disabled = false;
         setTimeout(() => btn.textContent = orig, 3000);
       }
     });
-    // clear custom validity on input
-    const phoneField = document.getElementById('contact-phone');
-    if (phoneField) phoneField.addEventListener('input', () => phoneField.setCustomValidity(""));
   }
 
   const track = document.querySelector('.carousel-track');

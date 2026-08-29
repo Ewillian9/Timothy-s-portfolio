@@ -19,6 +19,10 @@ export async function onRequestPost({ request, env }) {
       }
     }
 
+    if (message.length > 1000) {
+      return new Response(JSON.stringify({ error: "Message must be 1000 characters or less" }), { status: 400, headers: { "Content-Type": "application/json" } });
+    }
+
     // 1) Native Cloudflare Email Service binding (recommended) - add send_email binding named EMAIL in Pages > Settings > Functions
     if (env.EMAIL && env.EMAIL.send) {
       const res = await env.EMAIL.send({ to, from, subject, text, html, replyTo: email });
