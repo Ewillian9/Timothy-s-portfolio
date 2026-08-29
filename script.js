@@ -22,17 +22,35 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Contact accordion
+  // Contact accordion + char counter + auto-expand
   const contactToggle = document.querySelector('.contact-toggle');
   const contactPanel = document.getElementById('contact-panel');
+  const contactForm = document.getElementById('contact-form');
+  const messageField = document.getElementById('contact-message');
+  const charCount = document.getElementById('contact-char-count');
+  const phoneField = document.getElementById('contact-phone');
+
+  const updateCount = () => {
+    if (!messageField || !charCount) return;
+    charCount.textContent = `${messageField.value.length}/1000`;
+    if (messageField.offsetParent !== null) {
+      messageField.style.height = 'auto';
+      void messageField.offsetHeight;
+      const h = Math.max(120, messageField.scrollHeight);
+      messageField.style.height = h + 'px';
+    }
+  };
+
   if (contactToggle && contactPanel) {
     contactToggle.addEventListener('click', () => {
       const isOpen = contactToggle.getAttribute('aria-expanded') === 'true';
       contactToggle.setAttribute('aria-expanded', String(!isOpen));
       if (!isOpen) {
         contactPanel.hidden = false;
-        // allow hidden removal to paint before transition
-        requestAnimationFrame(() => contactPanel.classList.add('is-open'));
+        requestAnimationFrame(() => {
+          contactPanel.classList.add('is-open');
+          setTimeout(updateCount, 430);
+        });
       } else {
         contactPanel.classList.remove('is-open');
         contactPanel.addEventListener('transitionend', () => {
@@ -40,30 +58,47 @@ document.addEventListener('DOMContentLoaded', () => {
         }, { once: true });
       }
     });
+    contactPanel.addEventListener('transitionend', (e) => {
+      if (e.propertyName === 'grid-template-rows' && contactPanel.classList.contains('is-open')) updateCount();
+    });
   }
 
-  // Contact form - send without mail client via Cloudflare Worker/Function
-  const contactForm = document.getElementById('contact-form');
+  if (messageField && charCount) {
+    messageField.addEventListener('input', updateCount);
+    if (contactForm) contactForm.addEventListener('reset', () => setTimeout(updateCount, 0));
+    // initial: only set text, height will be set when panel opens
+    charCount.textContent = `${messageField.value.length}/1000`;
+    if (messageField.offsetParent !== null) updateCount();
+  }
+  if (phoneField) phoneField.addEventListener('input', () => phoneField.setCustomValidity(""));
+
+  // Contact form submit
   if (contactForm) {
-    const messageField = document.getElementById('contact-message');
-    const charCount = document.getElementById('contact-char-count');
-    const phoneField = document.getElementById('contact-phone');
-    if (messageField && charCount) {
-      const updateCount = () => {
-        charCount.textContent = `${messageField.value.length}/1000`;
-        messageField.style.height = 'auto';
-        messageField.style.height = messageField.scrollHeight + 'px';
-      };
-      messageField.addEventListener('input', updateCount);
-      updateCount();
-      // reset helper
-      contactForm.addEventListener('reset', () => setTimeout(updateCount, 0));
-    }
-    if (phoneField) phoneField.addEventListener('input', () => phoneField.setCustomValidity(""));
 
     contactForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      const nameInput = contactForm.querySelector('#contact-name');
+      const emailInput = contactForm.querySelector('#contact-email');
+      const subjectInput = contactForm.querySelector('#contact-subject');
       const phoneInput = contactForm.querySelector('#contact-phone');
+      const nameVal = nameInput.value.trim();
+      const emailVal = emailInput.value.trim();
+      const subjectVal = subjectInput.value.trim();
+      if (nameVal.length > 80) {
+        nameInput.setCustomValidity("Name must be 80 characters or less");
+        nameInput.reportValidity();
+        return;
+      } else nameInput.setCustomValidity("");
+      if (emailVal.length > 254) {
+        emailInput.setCustomValidity("Email must be 254 characters or less");
+        emailInput.reportValidity();
+        return;
+      } else emailInput.setCustomValidity("");
+      if (subjectVal.length > 150) {
+        subjectInput.setCustomValidity("Subject must be 150 characters or less");
+        subjectInput.reportValidity();
+        return;
+      } else subjectInput.setCustomValidity("");
       const phoneVal = phoneInput.value.trim();
       if (phoneVal) {
         const normalized = phoneVal.replace(/[\s\-\(\)]/g, "");

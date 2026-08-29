@@ -314,19 +314,26 @@ section {
   resize: vertical;
 }
 
+.contact-form .form-row {
+  width: 100%;
+}
+
 .contact-form .form-row textarea {
   resize: none;
   overflow-y: hidden;
   min-height: 120px;
+  box-sizing: border-box;
 }
 
 .char-count {
   display: block;
+  width: 100%;
   text-align: right;
   font-size: 0.7rem;
   letter-spacing: 0.08em;
-  color: #666;
-  margin-top: 0.35rem;
+  color: #888;
+  margin-top: 0.4rem;
+  line-height: 1;
 }
 
 .contact-form .form-row input::placeholder,
