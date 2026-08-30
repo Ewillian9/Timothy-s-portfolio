@@ -39,8 +39,8 @@ export async function onRequestPost({ request, env }) {
     const fromEmail = `${slug}@ewii.site`;
     const from = `${safeName} <${fromEmail}>`;
     const subject = `${userSubject} | ${safeName}`;
-    const text = `${message}\n\n--\nName: ${name}\nEmail: ${email}\nSubject: ${userSubject}`;
-    const html = `<p>${escapeHtml(message).replace(/\n/g, "<br>")}</p><hr><p><strong>Name:</strong> ${escapeHtml(name)}<br><strong>Email:</strong> ${escapeHtml(email)}<br><strong>Subject:</strong> ${escapeHtml(userSubject)}</p>`;
+    const text = message;
+    const html = `<p>${escapeHtml(message).replace(/\n/g, "<br>")}</p>`;
 
     if (name.length > 80) {
       return new Response(JSON.stringify({ error: "Name must be 80 characters or less" }), { status: 400, headers: { "Content-Type": "application/json" } });
