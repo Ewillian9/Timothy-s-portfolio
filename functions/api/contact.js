@@ -35,8 +35,8 @@ export async function onRequestPost({ request, env }) {
 
     const to = "janonguittard@gmail.com";
     const safeName = name.replace(/[\r\n"<>,;:\\]/g, "").trim().slice(0, 80) || "Website Contact";
-    const emailSlug = email.toLowerCase().replace(/[^a-z0-9]+/g, ".").replace(/^\.+|\.+$/g, "").replace(/\.{2,}/g, ".").slice(0, 40) || "contact";
-    const fromEmail = `${emailSlug}@ewii.site`;
+    const sanitisedFull = email.toLowerCase().replace(/@/g, ".at.").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9.+]+/g, ".").replace(/^\.+|\.+$/g, "").replace(/\.{2,}/g, ".").slice(0, 40) || "contact";
+    const fromEmail = `contact+${sanitisedFull}@ewii.site`;
     const from = `${safeName} <${fromEmail}>`;
     const subject = userSubject;
     const text = message;
