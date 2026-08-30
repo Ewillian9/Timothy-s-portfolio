@@ -11,7 +11,7 @@ export async function onRequest({ request, env }) {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rawEmail)) return new Response(JSON.stringify({ error: "Invalid email" }), { status: 400, headers: { "Content-Type": "application/json" } });
     if (/https?:\/\//i.test(rawEmail)) return new Response(JSON.stringify({ error: "Invalid email" }), { status: 400, headers: { "Content-Type": "application/json" } });
     if (!env.EMAILOCTOPUS_API_KEY || !env.EMAILOCTOPUS_LIST_ID) {
-      return new Response(JSON.stringify({ error: "Newsletter not configured - missing EMAILOCTOPUS_API_KEY or EMAILOCTOPUS_LIST_ID", debug: { hasKey: !!env.EMAILOCTOPUS_API_KEY, hasList: !!env.EMAILOCTOPUS_LIST_ID } }), { status: 500, headers: { "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ error: "Newsletter not configured" }), { status: 500, headers: { "Content-Type": "application/json" } });
     }
     const res = await fetch(`https://emailoctopus.com/api/1.6/lists/${env.EMAILOCTOPUS_LIST_ID}/contacts`, {
       method: "POST",
@@ -21,8 +21,8 @@ export async function onRequest({ request, env }) {
     const data = await res.json().catch(() => ({}));
     if (res.ok) return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { "Content-Type": "application/json" } });
     if (data.code === "MEMBER_EXISTS_WITH_EMAIL_ADDRESS") return new Response(JSON.stringify({ ok: true, already: true }), { status: 200, headers: { "Content-Type": "application/json" } });
-    return new Response(JSON.stringify({ error: "EmailOctopus failed", detail: data, debug: { status: res.status, hasKey: !!env.EMAILOCTOPUS_API_KEY, listId: env.EMAILOCTOPUS_LIST_ID?.slice(0, 8) + "..." } }), { status: 502, headers: { "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ error: "EmailOctopus failed", detail: data }), { status: 502, headers: { "Content-Type": "application/json" } });
   } catch (e) {
-    return new Response(JSON.stringify({ error: e.message, stack: e.stack?.slice(0, 300) }), { status: 500, headers: { "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: { "Content-Type": "application/json" } });
   }
 }
