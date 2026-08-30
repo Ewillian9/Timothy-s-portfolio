@@ -118,29 +118,29 @@
               <form class="contact-form" id="contact-form" action="/api/contact" method="POST">
               <div class="form-row">
                 <label for="contact-name" class="visually-hidden">Name</label>
-                <input type="text" id="contact-name" name="name" placeholder="Name" required autocomplete="name" maxlength="80">
+                <input type="text" id="contact-name" name="name" placeholder="Name *" required autocomplete="name" maxlength="80">
               </div>
               <div class="form-row">
                 <label for="contact-email" class="visually-hidden">Email</label>
-                <input type="email" id="contact-email" name="email" placeholder="Email" required autocomplete="email" maxlength="254">
+                <input type="email" id="contact-email" name="email" placeholder="Email *" required autocomplete="email" maxlength="254">
               </div>
               <div class="form-row form-row-split">
                 <div class="form-col">
-                  <label for="contact-phone" class="visually-hidden">Phone (optional)</label>
-                  <input type="tel" id="contact-phone" name="phone" placeholder="Phone (optional, e.g. +94771234567)" autocomplete="tel" pattern="\+\d{7,15}" title="Include country code, e.g. +94771234567">
+                  <label for="contact-phone" class="visually-hidden">Phone</label>
+                  <input type="tel" id="contact-phone" name="phone" placeholder="PHONE (E.G. +94,+33,+..)" autocomplete="tel" pattern="\+\d{7,15}" title="Include country code, e.g. +94771234567">
                 </div>
                 <div class="form-col">
-                  <label for="contact-company" class="visually-hidden">Company / Media (optional)</label>
-                  <input type="text" id="contact-company" name="company" placeholder="Company / Media (optional)" autocomplete="organization" maxlength="80">
+                  <label for="contact-company" class="visually-hidden">Company / Media</label>
+                  <input type="text" id="contact-company" name="company" placeholder="Company / Media" autocomplete="organization" maxlength="80">
                 </div>
               </div>
               <div class="form-row">
                 <label for="contact-subject" class="visually-hidden">Subject</label>
-                <input type="text" id="contact-subject" name="subject" placeholder="Subject" required maxlength="150">
+                <input type="text" id="contact-subject" name="subject" placeholder="Subject *" required maxlength="150">
               </div>
               <div class="form-row">
                 <label for="contact-message" class="visually-hidden">Message</label>
-                <textarea id="contact-message" name="message" placeholder="Message" rows="5" required maxlength="1000"></textarea>
+                <textarea id="contact-message" name="message" placeholder="Message *" rows="5" required maxlength="1000"></textarea>
                 <span class="char-count" id="contact-char-count">0/1000</span>
               </div>
               <button type="submit" class="btn-submit">Send Message</button>
