@@ -33,7 +33,7 @@ export async function onRequestPost({ request, env }) {
     const safeName = name.replace(/[\r\n"<>,;:\\]/g, "").trim().slice(0, 80) || "Website Contact";
     const from = `${safeName} <contact@ewii.site>`;
     const safeCompany = company ? String(company).replace(/[\r\n"<>,;:\\]/g, "").trim().slice(0, 80) : "";
-    const subject = safeCompany ? `${userSubject} | ${safeCompany}` : userSubject;
+    const subject = [userSubject, name, safeCompany].filter(Boolean).join(" | ");
     const text = `${message}\n\n--\nName: ${name}\nEmail: ${email}\nPhone: ${phone || "-"}\nCompany: ${safeCompany || "-"}`;
     const html = `<p>${escapeHtml(message).replace(/\n/g, "<br>")}</p><hr><p><strong>Name:</strong> ${escapeHtml(name)}<br><strong>Email:</strong> ${escapeHtml(email)}<br><strong>Phone:</strong> ${escapeHtml(phone || "-")}<br><strong>Company:</strong> ${escapeHtml(safeCompany || "-")}</p>`;
 
