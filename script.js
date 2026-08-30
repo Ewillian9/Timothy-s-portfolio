@@ -145,15 +145,40 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Newsletter - block harmful links in email field (Kit.com handles backend)
+  // Newsletter - Kit v4 via /api/newsletter
   const newsletterForm = document.querySelector('.newsletter-form');
   if (newsletterForm) {
-    newsletterForm.addEventListener('submit', (e) => {
+    newsletterForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
       const email = newsletterForm.querySelector('input[type="email"]');
-      if (email && email.value.length > 254) { email.setCustomValidity("Email too long"); email.reportValidity(); e.preventDefault(); return; }
-      if (email && /https?:\/\//i.test(email.value)) { email.setCustomValidity("Links not allowed in email"); email.reportValidity(); e.preventDefault(); return; }
+      const emailVal = email.value.trim();
+      if (emailVal.length > 254) { email.setCustomValidity("Email too long"); email.reportValidity(); return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) { email.setCustomValidity("Invalid email"); email.reportValidity(); return; }
+      if (/https?:\/\//i.test(emailVal)) { email.setCustomValidity("Links not allowed in email"); email.reportValidity(); return; }
       email.setCustomValidity("");
+      const btn = newsletterForm.querySelector('button[type="submit"]');
+      const orig = btn.textContent;
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+      try {
+        const res = await fetch(newsletterForm.action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email_address: emailVal }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || data.errors?.[0] || 'Failed');
+        btn.textContent = 'Subscribed ✓';
+        newsletterForm.reset();
+        setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 6000);
+      } catch (err) {
+        btn.textContent = err.message || 'Error - try again';
+        btn.disabled = false;
+        setTimeout(() => btn.textContent = orig, 6000);
+      }
     });
+    const nEmail = newsletterForm.querySelector('input[type="email"]');
+    if (nEmail) nEmail.addEventListener('input', () => nEmail.setCustomValidity(""));
   }
 
   const track = document.querySelector('.carousel-track');
