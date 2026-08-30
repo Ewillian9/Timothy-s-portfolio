@@ -14,34 +14,28 @@ export async function onRequestPost({ request, env }) {
     if (/https?:\/\//i.test(rawEmail)) {
       return new Response(JSON.stringify({ error: "Invalid email" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
-    if (!env.KIT_API_KEY || !env.KIT_FORM_ID) {
-      return new Response(JSON.stringify({ error: "Newsletter not configured - missing KIT_API_KEY or KIT_FORM_ID" }), { status: 500, headers: { "Content-Type": "application/json" } });
+    if (!env.EMAILOCTOPUS_API_KEY || !env.EMAILOCTOPUS_LIST_ID) {
+      return new Response(JSON.stringify({ error: "Newsletter not configured - missing EMAILOCTOPUS_API_KEY or EMAILOCTOPUS_LIST_ID" }), { status: 500, headers: { "Content-Type": "application/json" } });
     }
 
-    // 1) Create / upsert subscriber
-    const createRes = await fetch("https://api.kit.com/v4/subscribers", {
+    const res = await fetch(`https://emailoctopus.com/api/1.6/lists/${env.EMAILOCTOPUS_LIST_ID}/contacts`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", "X-Kit-Api-Key": env.KIT_API_KEY },
-      body: JSON.stringify({ email_address: rawEmail }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        api_key: env.EMAILOCTOPUS_API_KEY,
+        email_address: rawEmail,
+        status: "SUBSCRIBED",
+      }),
     });
-    const createData = await createRes.json().catch(() => ({}));
-    if (!createRes.ok) {
-      return new Response(JSON.stringify({ error: "Kit create subscriber failed", detail: createData }), { status: 502, headers: { "Content-Type": "application/json" } });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok) {
+      return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { "Content-Type": "application/json" } });
     }
-
-    // 2) Add to form
-    const formRes = await fetch(`https://api.kit.com/v4/forms/${env.KIT_FORM_ID}/subscribers`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "X-Kit-Api-Key": env.KIT_API_KEY },
-      body: JSON.stringify({ email_address: rawEmail }),
-    });
-    const formData = await formRes.json().catch(() => ({}));
-    if (!formRes.ok && formRes.status !== 200 && formRes.status !== 201) {
-      // if already subscribed, Kit returns 200; treat as success
-      return new Response(JSON.stringify({ error: "Kit add to form failed", detail: formData }), { status: 502, headers: { "Content-Type": "application/json" } });
+    // Already subscribed is also success
+    if (data.code === "MEMBER_EXISTS_WITH_EMAIL_ADDRESS") {
+      return new Response(JSON.stringify({ ok: true, already: true }), { status: 200, headers: { "Content-Type": "application/json" } });
     }
-
-    return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ error: "EmailOctopus failed", detail: data }), { status: 502, headers: { "Content-Type": "application/json" } });
   } catch (e) {
     return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: { "Content-Type": "application/json" } });
   }
