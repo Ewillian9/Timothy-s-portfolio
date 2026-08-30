@@ -1,6 +1,10 @@
-export async function onRequestPost({ request, env }) {
+export async function onRequest(context) {
+  const { request, env } = context;
+  if (request.method !== "POST") return new Response(JSON.stringify({ error: "Method not allowed" }), { status: 405, headers: { "Content-Type": "application/json" } });
   try {
-    const { email_address, email } = await request.json().catch(() => ({}));
+    let body = {};
+    try { body = await request.json(); } catch { body = {}; }
+    const { email_address, email } = body;
     const rawEmail = (email_address || email || "").trim();
     if (!rawEmail) {
       return new Response(JSON.stringify({ error: "Email is required" }), { status: 400, headers: { "Content-Type": "application/json" } });
