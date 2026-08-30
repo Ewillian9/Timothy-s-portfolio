@@ -124,9 +124,15 @@
                 <label for="contact-email" class="visually-hidden">Email</label>
                 <input type="email" id="contact-email" name="email" placeholder="Email" required autocomplete="email" maxlength="254">
               </div>
-              <div class="form-row">
-                <label for="contact-phone" class="visually-hidden">Phone (optional)</label>
-                <input type="tel" id="contact-phone" name="phone" placeholder="Phone (optional, e.g. +94771234567)" autocomplete="tel" pattern="\+\d{7,15}" title="Include country code, e.g. +94771234567">
+              <div class="form-row form-row-split">
+                <div class="form-col">
+                  <label for="contact-phone" class="visually-hidden">Phone (optional)</label>
+                  <input type="tel" id="contact-phone" name="phone" placeholder="Phone (optional, e.g. +94771234567)" autocomplete="tel" pattern="\+\d{7,15}" title="Include country code, e.g. +94771234567">
+                </div>
+                <div class="form-col">
+                  <label for="contact-company" class="visually-hidden">Company / Media (optional)</label>
+                  <input type="text" id="contact-company" name="company" placeholder="Company / Media (optional)" autocomplete="organization" maxlength="80">
+                </div>
               </div>
               <div class="form-row">
                 <label for="contact-subject" class="visually-hidden">Subject</label>

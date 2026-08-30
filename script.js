@@ -62,9 +62,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const nameInputEarly = contactForm.querySelector('#contact-name');
     const emailInputEarly = contactForm.querySelector('#contact-email');
     const subjectInputEarly = contactForm.querySelector('#contact-subject');
+    const companyInputEarly = contactForm.querySelector('#contact-company');
     if (nameInputEarly) nameInputEarly.addEventListener('input', () => nameInputEarly.setCustomValidity(""));
     if (emailInputEarly) emailInputEarly.addEventListener('input', () => emailInputEarly.setCustomValidity(""));
     if (subjectInputEarly) subjectInputEarly.addEventListener('input', () => subjectInputEarly.setCustomValidity(""));
+    if (companyInputEarly) companyInputEarly.addEventListener('input', () => companyInputEarly.setCustomValidity(""));
     if (phoneField) phoneField.addEventListener('input', () => phoneField.setCustomValidity(""));
     if (messageField) messageField.addEventListener('input', () => messageField.setCustomValidity(""));
 
@@ -84,20 +86,23 @@ document.addEventListener('DOMContentLoaded', () => {
       const nameInput = contactForm.querySelector('#contact-name');
       const emailInput = contactForm.querySelector('#contact-email');
       const subjectInput = contactForm.querySelector('#contact-subject');
+      const companyInput = contactForm.querySelector('#contact-company');
       const phoneInput = contactForm.querySelector('#contact-phone');
       const nameVal = nameInput.value.trim();
       const emailVal = emailInput.value.trim();
       const subjectVal = subjectInput.value.trim();
+      const companyVal = companyInput ? companyInput.value.trim() : "";
       const phoneVal = phoneInput.value.trim();
       const msgVal = messageField ? messageField.value : "";
 
       if (nameVal.length > 80) { nameInput.setCustomValidity("Name must be 80 characters or less"); nameInput.reportValidity(); return; } else nameInput.setCustomValidity("");
       if (emailVal.length > 254) { emailInput.setCustomValidity("Email must be 254 characters or less"); emailInput.reportValidity(); return; } else emailInput.setCustomValidity("");
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) { emailInput.setCustomValidity("Invalid email"); emailInput.reportValidity(); return; } else emailInput.setCustomValidity("");
+      if (companyVal.length > 80) { companyInput.setCustomValidity("Company must be 80 characters or less"); companyInput.reportValidity(); return; } else if (companyInput) companyInput.setCustomValidity("");
       if (subjectVal.length > 150) { subjectInput.setCustomValidity("Subject must be 150 characters or less"); subjectInput.reportValidity(); return; } else subjectInput.setCustomValidity("");
       if (msgVal.length > 1000) { if (messageField) { messageField.setCustomValidity("Message must be 1000 characters or less"); messageField.reportValidity(); } return; } else if (messageField) messageField.setCustomValidity("");
-      for (const [field, val, el] of [["name", nameVal, nameInput], ["subject", subjectVal, subjectInput], ["message", msgVal, messageField]]) {
-        if (containsHarmful(val)) { el.setCustomValidity("Links to exe/image/code or script not allowed"); el.reportValidity(); return; } else el.setCustomValidity("");
+      for (const [field, val, el] of [["name", nameVal, nameInput], ["company", companyVal, companyInput], ["subject", subjectVal, subjectInput], ["message", msgVal, messageField]]) {
+        if (val && containsHarmful(val)) { el.setCustomValidity("Links to exe/image/code or script not allowed"); el.reportValidity(); return; } else if (el) el.setCustomValidity("");
       }
       if (phoneVal) {
         const normalized = phoneVal.replace(/[\s\-\(\)]/g, "");

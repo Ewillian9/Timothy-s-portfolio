@@ -329,6 +329,16 @@ section {
   margin-top: 0.35rem;
 }
 
+.form-row-split {
+  display: flex;
+  gap: 1rem;
+}
+
+.form-row-split .form-col {
+  flex: 1;
+  min-width: 0;
+}
+
 .contact-form .form-row input::placeholder,
 .contact-form .form-row textarea::placeholder {
   color: #777;
