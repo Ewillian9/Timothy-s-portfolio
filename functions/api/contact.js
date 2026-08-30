@@ -1,6 +1,6 @@
 export async function onRequestPost({ request, env }) {
   try {
-    const { name, email, subject: userSubject, phone, company, message } = await request.json();
+    const { name, email, subject: userSubject, message } = await request.json();
     if (!name || !email || !userSubject || !message) {
       return new Response(JSON.stringify({ error: "Missing required fields: name, email, subject, message" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
@@ -18,12 +18,16 @@ export async function onRequestPost({ request, env }) {
       return false;
     };
 
+    const allowedSubjects = ["Booking / Performance", "Collaboration", "Brand / Commercial", "Press / Media", "General Enquiries"];
+    if (!allowedSubjects.includes(userSubject)) {
+      return new Response(JSON.stringify({ error: "Invalid subject" }), { status: 400, headers: { "Content-Type": "application/json" } });
+    }
     // basic email format
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return new Response(JSON.stringify({ error: "Invalid email format" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
     // block harmful content (links to exe/image/code, script, etc.)
-    for (const [field, val] of [["name", name], ["company", company], ["subject", userSubject], ["message", message]]) {
+    for (const [field, val] of [["name", name], ["subject", userSubject], ["message", message]]) {
       if (containsHarmful(val)) {
         return new Response(JSON.stringify({ error: `Harmful content detected in ${field} (links to exe/image/code or script not allowed)` }), { status: 400, headers: { "Content-Type": "application/json" } });
       }
@@ -32,29 +36,15 @@ export async function onRequestPost({ request, env }) {
     const to = "janonguittard@gmail.com";
     const safeName = name.replace(/[\r\n"<>,;:\\]/g, "").trim().slice(0, 80) || "Website Contact";
     const from = `${safeName} <contact@ewii.site>`;
-    const safeCompany = company ? String(company).replace(/[\r\n"<>,;:\\]/g, "").trim().slice(0, 80) : "";
-    const subject = [safeCompany, userSubject, name].filter(Boolean).join(" | ");
-    const text = `${message}\n\n--\nName: ${name}\nEmail: ${email}\nPhone: ${phone || "-"}\nCompany: ${safeCompany || "-"}`;
-    const html = `<p>${escapeHtml(message).replace(/\n/g, "<br>")}</p><hr><p><strong>Name:</strong> ${escapeHtml(name)}<br><strong>Email:</strong> ${escapeHtml(email)}<br><strong>Phone:</strong> ${escapeHtml(phone || "-")}<br><strong>Company:</strong> ${escapeHtml(safeCompany || "-")}</p>`;
-
-    if (phone) {
-      const normalized = phone.replace(/[\s\-\(\)]/g, "");
-      if (!/^\+\d{7,15}$/.test(normalized)) {
-        return new Response(JSON.stringify({ error: "Phone must include country code, e.g. +94771234567" }), { status: 400, headers: { "Content-Type": "application/json" } });
-      }
-    }
+    const subject = `${userSubject} | ${safeName}`;
+    const text = `${message}\n\n--\nName: ${name}\nEmail: ${email}\nSubject: ${userSubject}`;
+    const html = `<p>${escapeHtml(message).replace(/\n/g, "<br>")}</p><hr><p><strong>Name:</strong> ${escapeHtml(name)}<br><strong>Email:</strong> ${escapeHtml(email)}<br><strong>Subject:</strong> ${escapeHtml(userSubject)}</p>`;
 
     if (name.length > 80) {
       return new Response(JSON.stringify({ error: "Name must be 80 characters or less" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
     if (email.length > 254) {
       return new Response(JSON.stringify({ error: "Email must be 254 characters or less" }), { status: 400, headers: { "Content-Type": "application/json" } });
-    }
-    if (company && company.length > 80) {
-      return new Response(JSON.stringify({ error: "Company must be 80 characters or less" }), { status: 400, headers: { "Content-Type": "application/json" } });
-    }
-    if (userSubject.length > 150) {
-      return new Response(JSON.stringify({ error: "Subject must be 150 characters or less" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
     if (message.length > 1000) {
       return new Response(JSON.stringify({ error: "Message must be 1000 characters or less" }), { status: 400, headers: { "Content-Type": "application/json" } });

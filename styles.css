@@ -301,7 +301,8 @@ section {
 }
 
 .contact-form .form-row input,
-.contact-form .form-row textarea {
+.contact-form .form-row textarea,
+.contact-form .form-row select {
   width: 100%;
   background: transparent;
   border: 1px solid #333;
@@ -312,6 +313,21 @@ section {
   outline: none;
   transition: border-color 0.2s ease;
   resize: vertical;
+}
+
+.contact-form .form-row select {
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.contact-form .form-row select:invalid {
+  color: #777;
+}
+
+.contact-form .form-row select option {
+  background: #0a0a0a;
+  color: #fff;
 }
 
 .contact-form .form-row textarea {
@@ -348,7 +364,8 @@ section {
 }
 
 .contact-form .form-row input:focus,
-.contact-form .form-row textarea:focus {
+.contact-form .form-row textarea:focus,
+.contact-form .form-row select:focus {
   border-color: #fff;
 }
 
