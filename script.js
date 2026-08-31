@@ -44,18 +44,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Contact form - send without mail client via Cloudflare Worker/Function
   const contactForm = document.getElementById('contact-form');
+  // Client-side rate limit: 2 sends / 12h via localStorage (UX only, server enforces)
+  const CONTACT_LIMIT = 2;
+  const CONTACT_WINDOW_MS = 12 * 60 * 60 * 1000;
+  const getContactRL = () => { try { return JSON.parse(localStorage.getItem("contact:rl") || "null"); } catch { return null; } };
+  const setContactRL = (v) => { try { localStorage.setItem("contact:rl", JSON.stringify(v)); } catch {} };
+  const canContactSend = () => { const rl = getContactRL(); if (!rl) return true; if (Date.now() > rl.until) { try { localStorage.removeItem("contact:rl"); } catch {} return true; } return rl.count < CONTACT_LIMIT; };
+  const contactRemainingMs = () => { const rl = getContactRL(); return rl ? Math.max(0, rl.until - Date.now()) : 0; };
+  const formatRemaining = (ms) => { const h = Math.floor(ms / 3600000); const m = Math.floor((ms % 3600000) / 60000); return h > 0 ? `${h}h ${m}m` : `${m}m`; };
+
   if (contactForm) {
     const messageField = document.getElementById('contact-message');
     const charCount = document.getElementById('contact-char-count');
+    const contactBtnEarly = contactForm.querySelector('button[type="submit"]');
+    const refreshContactLimit = () => {
+      if (!contactBtnEarly) return true;
+      if (!canContactSend()) {
+        contactBtnEarly.disabled = true;
+        contactBtnEarly.textContent = `Limit reached — try in ${formatRemaining(contactRemainingMs())}`;
+        return false;
+      }
+      return true;
+    };
     if (messageField && charCount) {
       const updateCount = () => {
         charCount.textContent = `${messageField.value.length}/1000`;
-        messageField.style.height = 'auto';
-        messageField.style.height = messageField.scrollHeight + 'px';
+        if (messageField.offsetParent !== null) {
+          messageField.style.height = 'auto';
+          void messageField.offsetHeight;
+          messageField.style.height = Math.max(120, messageField.scrollHeight) + 'px';
+        }
       };
       messageField.addEventListener('input', updateCount);
-      updateCount();
+      // initial
+      charCount.textContent = `${messageField.value.length}/1000`;
+      if (messageField.offsetParent !== null) updateCount();
       contactForm.addEventListener('reset', () => setTimeout(updateCount, 0));
+      // re-check when panel opens
+      const contactPanelEarly = document.getElementById('contact-panel');
+      if (contactPanelEarly) contactPanelEarly.addEventListener('transitionend', (e) => { if (e.propertyName === 'grid-template-rows' && contactPanelEarly.classList.contains('is-open')) updateCount(); });
     }
     const nameInputEarly = contactForm.querySelector('#contact-name');
     const emailInputEarly = contactForm.querySelector('#contact-email');
@@ -64,6 +91,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (emailInputEarly) emailInputEarly.addEventListener('input', () => emailInputEarly.setCustomValidity(""));
     if (subjectInputEarly) subjectInputEarly.addEventListener('change', () => subjectInputEarly.setCustomValidity(""));
     if (messageField) messageField.addEventListener('input', () => messageField.setCustomValidity(""));
+    refreshContactLimit();
+    setInterval(() => {
+      if (!canContactSend()) refreshContactLimit();
+      else if (contactBtnEarly && contactBtnEarly.textContent.startsWith("Limit")) { contactBtnEarly.textContent = "Send Message"; contactBtnEarly.disabled = false; }
+    }, 60000);
 
     const containsHarmful = (s) => {
       if (!s) return false;
@@ -95,6 +127,12 @@ document.addEventListener('DOMContentLoaded', () => {
       for (const [field, val, el] of [["name", nameVal, nameInput], ["subject", subjectVal, subjectInput], ["message", msgVal, messageField]]) {
         if (val && containsHarmful(val)) { el.setCustomValidity("Links to exe/image/code or script not allowed"); el.reportValidity(); return; } else if (el) el.setCustomValidity("");
       }
+      if (!canContactSend()) {
+        const b = contactForm.querySelector('button[type="submit"]');
+        b.disabled = true;
+        b.textContent = `Limit reached — try in ${formatRemaining(contactRemainingMs())}`;
+        return;
+      }
       const btn = contactForm.querySelector('button[type="submit"]');
       const orig = btn.textContent;
       btn.textContent = 'Sending...';
@@ -115,6 +153,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (messageField && charCount) {
           charCount.textContent = '0/1000';
           messageField.style.height = 'auto';
+        }
+        // update rate limit
+        let rl = getContactRL();
+        if (!rl || Date.now() > rl.until) rl = { count: 0, until: Date.now() + CONTACT_WINDOW_MS };
+        rl.count++;
+        setContactRL(rl);
+        if (!canContactSend()) {
+          btn.textContent = `Limit reached — try in ${formatRemaining(contactRemainingMs())}`;
+          btn.disabled = true;
+          return;
         }
         setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 6000);
       } catch (err) {

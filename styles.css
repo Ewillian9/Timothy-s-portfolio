@@ -185,6 +185,8 @@ section {
 .newsletter {
   text-align: center;
   max-width: 560px;
+  padding-top: 0;
+  padding-bottom: 8rem;
 }
 
 .newsletter-form {
@@ -230,6 +232,7 @@ section {
   text-align: center;
   max-width: 560px;
   border-top: 1px solid #1a1a1a;
+  padding-top: 8rem;
 }
 
 .contact-toggle {
