@@ -52,16 +52,17 @@ export async function onRequestPost({ request, env }) {
       return new Response(JSON.stringify({ error: "Message must be 1000 characters or less" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
 
-    // KV rate limit: 2 per 12h per email (least writes: 1 get + 1 put on success)
+    // KV rate limit: 2 per 12h per IP (least writes: 1 get + 1 put on success)
     let rateLimitKey = null;
     let rateLimitData = null;
     if (env.CONTACT_RL) {
-      rateLimitKey = `contact:${email.toLowerCase()}`;
+      const ip = request.headers.get("CF-Connecting-IP") || request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+      rateLimitKey = `contact:ip:${ip}`;
       try { rateLimitData = await env.CONTACT_RL.get(rateLimitKey, "json"); } catch {}
       const now = Date.now();
       if (rateLimitData && rateLimitData.count >= 2 && now < rateLimitData.until) {
         const retry = Math.ceil((rateLimitData.until - now) / 1000);
-        return new Response(JSON.stringify({ error: "Rate limited — try again later" }), { status: 429, headers: { "Content-Type": "application/json", "Retry-After": String(retry) } });
+        return new Response(JSON.stringify({ error: "Rate limited — try again later", count: rateLimitData.count, until: rateLimitData.until, retryAfter: retry }), { status: 429, headers: { "Content-Type": "application/json", "Retry-After": String(retry) } });
       }
     }
 

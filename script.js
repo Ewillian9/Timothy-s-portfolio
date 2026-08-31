@@ -165,6 +165,20 @@ document.addEventListener('DOMContentLoaded', () => {
           body: JSON.stringify(data),
         });
         if (!res.ok) {
+          if (res.status === 429) {
+            const errData = await res.json().catch(() => ({}));
+            const until = errData.until || (Date.now() + (errData.retryAfter ? errData.retryAfter * 1000 : 12 * 60 * 60 * 1000));
+            const count = errData.count || 2;
+            setContactRL({ count, until });
+            const b = contactForm.querySelector('button[type="submit"]');
+            b.disabled = true;
+            b.textContent = "Give me time to answer";
+            b.style.opacity = "0.5";
+            b.style.background = "#666";
+            b.style.borderColor = "#666";
+            b.style.color = "#fff";
+            throw new Error("Rate limited — try again later");
+          }
           const err = await res.json().catch(() => ({}));
           throw new Error(err.error || 'Failed');
         }
@@ -193,6 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 6000);
       } catch (err) {
         const msg = err.message || 'Error - try again';
+        if (msg.includes("Rate limited")) return;
         btn.textContent = msg.includes("country code") || msg.includes("1000") ? msg : 'Error - try again';
         btn.disabled = false;
         setTimeout(() => btn.textContent = orig, 6000);
