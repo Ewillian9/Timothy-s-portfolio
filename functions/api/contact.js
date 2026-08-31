@@ -52,9 +52,33 @@ export async function onRequestPost({ request, env }) {
       return new Response(JSON.stringify({ error: "Message must be 1000 characters or less" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
 
+    // KV rate limit: 2 per 12h per email (least writes: 1 get + 1 put on success)
+    let rateLimitKey = null;
+    let rateLimitData = null;
+    if (env.CONTACT_RL) {
+      rateLimitKey = `contact:${email.toLowerCase()}`;
+      try { rateLimitData = await env.CONTACT_RL.get(rateLimitKey, "json"); } catch {}
+      const now = Date.now();
+      if (rateLimitData && rateLimitData.count >= 2 && now < rateLimitData.until) {
+        const retry = Math.ceil((rateLimitData.until - now) / 1000);
+        return new Response(JSON.stringify({ error: "Rate limited — try again later" }), { status: 429, headers: { "Content-Type": "application/json", "Retry-After": String(retry) } });
+      }
+    }
+
+    const recordRateLimit = async () => {
+      if (!env.CONTACT_RL || !rateLimitKey) return;
+      const now2 = Date.now();
+      const WINDOW_MS = 12 * 60 * 60 * 1000;
+      const until = rateLimitData && now2 < rateLimitData.until ? rateLimitData.until : now2 + WINDOW_MS;
+      const count = (rateLimitData && now2 < rateLimitData.until ? rateLimitData.count : 0) + 1;
+      const ttl = Math.ceil((until - now2) / 1000);
+      try { await env.CONTACT_RL.put(rateLimitKey, JSON.stringify({ count, until }), { expirationTtl: ttl }); } catch {}
+    };
+
     // 1) Native Cloudflare Email Service binding (recommended) - add send_email binding named EMAIL in Pages > Settings > Functions
     if (env.EMAIL && env.EMAIL.send) {
       const res = await env.EMAIL.send({ to, from, subject, text, html, replyTo: email });
+      await recordRateLimit();
       return new Response(JSON.stringify({ ok: true, via: "binding", id: res.messageId }), { status: 200, headers: { "Content-Type": "application/json" } });
     }
 
@@ -69,6 +93,7 @@ export async function onRequestPost({ request, env }) {
       if (!res.ok || !data.success) {
         return new Response(JSON.stringify({ error: "Cloudflare Email API failed", detail: data }), { status: 502, headers: { "Content-Type": "application/json" } });
       }
+      await recordRateLimit();
       return new Response(JSON.stringify({ ok: true, via: "rest", result: data.result }), { status: 200, headers: { "Content-Type": "application/json" } });
     }
 
@@ -83,6 +108,7 @@ export async function onRequestPost({ request, env }) {
         const txt = await res.text();
         return new Response(JSON.stringify({ error: "Resend failed", detail: txt }), { status: 502, headers: { "Content-Type": "application/json" } });
       }
+      await recordRateLimit();
       return new Response(JSON.stringify({ ok: true, via: "resend" }), { status: 200, headers: { "Content-Type": "application/json" } });
     }
 
