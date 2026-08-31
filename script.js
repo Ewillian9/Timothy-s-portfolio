@@ -61,9 +61,18 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!contactBtnEarly) return true;
       if (!canContactSend()) {
         contactBtnEarly.disabled = true;
-        contactBtnEarly.textContent = `Limit reached — try in ${formatRemaining(contactRemainingMs())}`;
+        contactBtnEarly.textContent = "Give me time to answer";
+        contactBtnEarly.style.opacity = "0.5";
+        contactBtnEarly.style.background = "#666";
+        contactBtnEarly.style.borderColor = "#666";
+        contactBtnEarly.style.color = "#fff";
         return false;
       }
+      contactBtnEarly.disabled = false;
+      contactBtnEarly.style.opacity = "";
+      contactBtnEarly.style.background = "";
+      contactBtnEarly.style.borderColor = "";
+      contactBtnEarly.style.color = "";
       return true;
     };
     if (messageField && charCount) {
@@ -94,7 +103,14 @@ document.addEventListener('DOMContentLoaded', () => {
     refreshContactLimit();
     setInterval(() => {
       if (!canContactSend()) refreshContactLimit();
-      else if (contactBtnEarly && contactBtnEarly.textContent.startsWith("Limit")) { contactBtnEarly.textContent = "Send Message"; contactBtnEarly.disabled = false; }
+      else if (contactBtnEarly && contactBtnEarly.textContent === "Give me time to answer") {
+        contactBtnEarly.textContent = "Send Message";
+        contactBtnEarly.disabled = false;
+        contactBtnEarly.style.opacity = "";
+        contactBtnEarly.style.background = "";
+        contactBtnEarly.style.borderColor = "";
+        contactBtnEarly.style.color = "";
+      }
     }, 60000);
 
     const containsHarmful = (s) => {
@@ -130,7 +146,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!canContactSend()) {
         const b = contactForm.querySelector('button[type="submit"]');
         b.disabled = true;
-        b.textContent = `Limit reached — try in ${formatRemaining(contactRemainingMs())}`;
+        b.textContent = "Give me time to answer";
+        b.style.opacity = "0.5";
+        b.style.background = "#666";
+        b.style.borderColor = "#666";
+        b.style.color = "#fff";
         return;
       }
       const btn = contactForm.querySelector('button[type="submit"]');
@@ -160,8 +180,14 @@ document.addEventListener('DOMContentLoaded', () => {
         rl.count++;
         setContactRL(rl);
         if (!canContactSend()) {
-          btn.textContent = `Limit reached — try in ${formatRemaining(contactRemainingMs())}`;
-          btn.disabled = true;
+          setTimeout(() => {
+            btn.textContent = "Give me time to answer";
+            btn.disabled = true;
+            btn.style.opacity = "0.5";
+            btn.style.background = "#666";
+            btn.style.borderColor = "#666";
+            btn.style.color = "#fff";
+          }, 6000);
           return;
         }
         setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 6000);
