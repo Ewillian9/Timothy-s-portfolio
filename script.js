@@ -244,9 +244,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const prevBtn = document.querySelector('.carousel-btn.prev');
   const nextBtn = document.querySelector('.carousel-btn.next');
   const dotsContainer = document.querySelector('.carousel-dots');
-  if (!track || !slides.length) return;
-
-  let current = 0;
+  if (track && slides.length) {
+    let current = 0;
   const total = slides.length;
 
   const platformsData = [
@@ -372,9 +371,11 @@ document.addEventListener('DOMContentLoaded', () => {
     isDragging = false;
   });
 
-  // keyboard
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowLeft') goTo(current - 1);
-    if (e.key === 'ArrowRight') goTo(current + 1);
-  });
+    // keyboard
+    document.addEventListener('keydown', (e) => {
+      if (e.target.closest('input,textarea,select,[contenteditable]')) return;
+      if (e.key === 'ArrowLeft') goTo(current - 1);
+      if (e.key === 'ArrowRight') goTo(current + 1);
+    });
+  }
 });
