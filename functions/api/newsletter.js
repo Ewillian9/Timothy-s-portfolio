@@ -1,29 +1,26 @@
 import { emailRegex } from '../../utils/validation.js';
+const json = (data, status = 200, headers = {}) => new Response(JSON.stringify(data), { status, headers: { "Content-Type": "application/json", ...headers } });
 export async function onRequest({ request, env }) {
-  if (request.method !== "POST") {
-    return new Response(JSON.stringify({ error: "Method not allowed" }), { status: 405, headers: { "Content-Type": "application/json" } });
-  }
+  if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
   try {
     let body = {};
     try { body = await request.json(); } catch {}
     const rawEmail = (body.email_address || body.email || "").trim();
-    if (!rawEmail) return new Response(JSON.stringify({ error: "Email is required" }), { status: 400, headers: { "Content-Type": "application/json" } });
-    if (rawEmail.length > 254) return new Response(JSON.stringify({ error: "Email must be 254 characters or less" }), { status: 400, headers: { "Content-Type": "application/json" } });
-    if (!emailRegex.test(rawEmail)) return new Response(JSON.stringify({ error: "Invalid email" }), { status: 400, headers: { "Content-Type": "application/json" } });
-    if (/https?:\/\//i.test(rawEmail)) return new Response(JSON.stringify({ error: "Invalid email" }), { status: 400, headers: { "Content-Type": "application/json" } });
-    if (!env.EMAILOCTOPUS_API_KEY || !env.EMAILOCTOPUS_LIST_ID) {
-      return new Response(JSON.stringify({ error: "Newsletter not configured" }), { status: 500, headers: { "Content-Type": "application/json" } });
-    }
+    if (!rawEmail) return json({ error: "Email is required" }, 400);
+    if (rawEmail.length > 254) return json({ error: "Email must be 254 characters or less" }, 400);
+    if (!emailRegex.test(rawEmail)) return json({ error: "Invalid email" }, 400);
+    if (/https?:\/\//i.test(rawEmail)) return json({ error: "Invalid email" }, 400);
+    if (!env.EMAILOCTOPUS_API_KEY || !env.EMAILOCTOPUS_LIST_ID) return json({ error: "Newsletter not configured" }, 500);
     const res = await fetch(`https://emailoctopus.com/api/1.6/lists/${env.EMAILOCTOPUS_LIST_ID}/contacts`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ api_key: env.EMAILOCTOPUS_API_KEY, email_address: rawEmail, status: "SUBSCRIBED" }),
     });
     const data = await res.json().catch(() => ({}));
-    if (res.ok) return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { "Content-Type": "application/json" } });
-    if (data.code === "MEMBER_EXISTS_WITH_EMAIL_ADDRESS") return new Response(JSON.stringify({ ok: true, already: true }), { status: 200, headers: { "Content-Type": "application/json" } });
-    return new Response(JSON.stringify({ error: "EmailOctopus failed", detail: data }), { status: 502, headers: { "Content-Type": "application/json" } });
+    if (res.ok) return json({ ok: true });
+    if (data.code === "MEMBER_EXISTS_WITH_EMAIL_ADDRESS") return json({ ok: true, already: true });
+    return json({ error: "EmailOctopus failed", detail: data }, 502);
   } catch (e) {
-    return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: { "Content-Type": "application/json" } });
+    return json({ error: e.message }, 500);
   }
 }
