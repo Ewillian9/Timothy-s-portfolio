@@ -354,6 +354,14 @@ section {
   color: #fff;
 }
 
+.btn-submit.is-limited {
+  opacity: 0.5;
+  background: #666;
+  border-color: #666;
+  color: #fff;
+  cursor: not-allowed;
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;

@@ -59,18 +59,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!contactBtnEarly) return true;
       if (!canContactSend()) {
         contactBtnEarly.disabled = true;
-        contactBtnEarly.textContent = "Give me time to answer";
-        contactBtnEarly.style.opacity = "0.5";
-        contactBtnEarly.style.background = "#666";
-        contactBtnEarly.style.borderColor = "#666";
-        contactBtnEarly.style.color = "#fff";
+        contactBtnEarly.textContent = "I'll be in touch";
+        contactBtnEarly.classList.add("is-limited");
         return false;
       }
       contactBtnEarly.disabled = false;
-      contactBtnEarly.style.opacity = "";
-      contactBtnEarly.style.background = "";
-      contactBtnEarly.style.borderColor = "";
-      contactBtnEarly.style.color = "";
+      contactBtnEarly.classList.remove("is-limited");
       return true;
     };
     if (messageField && charCount) {
@@ -101,13 +95,10 @@ document.addEventListener('DOMContentLoaded', () => {
     refreshContactLimit();
     setInterval(() => {
       if (!canContactSend()) refreshContactLimit();
-      else if (contactBtnEarly && contactBtnEarly.textContent === "Give me time to answer") {
+      else if (contactBtnEarly && contactBtnEarly.textContent === "I'll be in touch") {
         contactBtnEarly.textContent = "Send Message";
         contactBtnEarly.disabled = false;
-        contactBtnEarly.style.opacity = "";
-        contactBtnEarly.style.background = "";
-        contactBtnEarly.style.borderColor = "";
-        contactBtnEarly.style.color = "";
+        contactBtnEarly.classList.remove("is-limited");
       }
     }, 60000);
 
@@ -144,11 +135,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!canContactSend()) {
         const b = contactForm.querySelector('button[type="submit"]');
         b.disabled = true;
-        b.textContent = "Give me time to answer";
-        b.style.opacity = "0.5";
-        b.style.background = "#666";
-        b.style.borderColor = "#666";
-        b.style.color = "#fff";
+        b.textContent = "I'll be in touch";
+        b.classList.add("is-limited");
         return;
       }
       const btn = contactForm.querySelector('button[type="submit"]');
@@ -170,11 +158,8 @@ document.addEventListener('DOMContentLoaded', () => {
             setContactRL({ count, until });
             const b = contactForm.querySelector('button[type="submit"]');
             b.disabled = true;
-            b.textContent = "Give me time to answer";
-            b.style.opacity = "0.5";
-            b.style.background = "#666";
-            b.style.borderColor = "#666";
-            b.style.color = "#fff";
+            b.textContent = "I'll be in touch";
+            b.classList.add("is-limited");
             throw new Error("Rate limited — try again later");
           }
           const err = await res.json().catch(() => ({}));
@@ -193,12 +178,9 @@ document.addEventListener('DOMContentLoaded', () => {
         setContactRL(rl);
         if (!canContactSend()) {
           setTimeout(() => {
-            btn.textContent = "Give me time to answer";
+            btn.textContent = "I'll be in touch";
             btn.disabled = true;
-            btn.style.opacity = "0.5";
-            btn.style.background = "#666";
-            btn.style.borderColor = "#666";
-            btn.style.color = "#fff";
+            btn.classList.add("is-limited");
           }, 6000);
           return;
         }
