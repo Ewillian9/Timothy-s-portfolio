@@ -266,6 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
       links: [
         { href: 'https://open.spotify.com/track/6vWTmxhYT8RoSn99kNX6dJ', icon: 'assets/icons/spotify.svg', alt: 'Spotify' },
         { href: 'https://music.apple.com/us/song/khadhambariye/6794283060', icon: 'assets/icons/apple-music.svg', alt: 'Apple Music' },
+        { href: 'https://music.youtube.com/watch?v=bHWFK5yP_ak', icon: 'assets/icons/youtube-music.svg', alt: 'YouTube Music' },
         { href: 'https://music.amazon.com/albums/B0HBBR9KPN', icon: 'assets/icons/amazon-music.svg', alt: 'Amazon Music' },
         { href: 'https://soundcloud.com/isaactimothy/khadhambariye', icon: 'assets/icons/soundcloud.svg', alt: 'SoundCloud' },
         { href: 'https://link.deezer.com/s/34dNggTwC0ef2gUTkYLqa', icon: 'assets/icons/deezer.svg', alt: 'Deezer' },
@@ -276,8 +277,9 @@ document.addEventListener('DOMContentLoaded', () => {
       links: [
         { href: 'https://open.spotify.com/track/0f858Tv5lqvBkJzZuuSHed', icon: 'assets/icons/spotify.svg', alt: 'Spotify' },
         { href: 'https://music.apple.com/us/song/arctic-eyes/6789503937', icon: 'assets/icons/apple-music.svg', alt: 'Apple Music' },
-        { href: 'https://music.youtube.com/watch?v=OPV2sNcmSuc&list=OLAK5uy_lqWewJAYblczilDdoKp_6btmX5j7UQv1s', icon: 'assets/icons/youtube-music.svg', alt: 'YouTube Music' },
+        { href: 'https://music.youtube.com/watch?v=OPV2sNcmSuc', icon: 'assets/icons/youtube-music.svg', alt: 'YouTube Music' },
         { href: 'https://music.amazon.com/albums/B0HBBR9KPN', icon: 'assets/icons/amazon-music.svg', alt: 'Amazon Music' },
+        { href: 'https://www.deezer.com/us/album/1025788072', icon: 'assets/icons/deezer.svg', alt: 'Deezer' },
         { href: 'https://tidal.com/album/541878355', icon: 'assets/icons/tidal.svg', alt: 'Tidal' },
       ]
     },
@@ -294,17 +296,22 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     {
       links: [
-        { href: 'https://www.youtube.com/watch?v=KHES7V8NitE&t=761s', icon: 'assets/icons/youtube.svg', alt: 'YouTube' },
+        { href: 'https://www.youtube.com/watch?v=1P2cQqoRTDg', icon: 'assets/icons/youtube.svg', alt: 'YouTube' },
       ]
     },
     {
       links: [
-        { href: 'https://www.youtube.com/watch?v=lJmENTzfmZc&t=645s', icon: 'assets/icons/youtube.svg', alt: 'YouTube' },
+        { href: 'https://www.youtube.com/watch?v=p1qOVspA-8Y', icon: 'assets/icons/youtube.svg', alt: 'YouTube' },
       ]
     },
     {
       links: [
-        { href: 'https://www.youtube.com/watch?v=0uJ6y27soEI&t=122s', icon: 'assets/icons/youtube.svg', alt: 'YouTube' },
+        { href: 'https://www.youtube.com/watch?v=_TyjXzWGDag', icon: 'assets/icons/youtube.svg', alt: 'YouTube' },
+      ]
+    },
+    {
+      links: [
+        { href: 'https://www.youtube.com/watch?v=qxYF9LP64kg', icon: 'assets/icons/youtube.svg', alt: 'YouTube' },
       ]
     },
   ];
