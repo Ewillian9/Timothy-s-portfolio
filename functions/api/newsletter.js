@@ -1,3 +1,4 @@
+import { emailRegex } from '../../utils/validation.js';
 export async function onRequest({ request, env }) {
   if (request.method !== "POST") {
     return new Response(JSON.stringify({ error: "Method not allowed" }), { status: 405, headers: { "Content-Type": "application/json" } });
@@ -8,7 +9,7 @@ export async function onRequest({ request, env }) {
     const rawEmail = (body.email_address || body.email || "").trim();
     if (!rawEmail) return new Response(JSON.stringify({ error: "Email is required" }), { status: 400, headers: { "Content-Type": "application/json" } });
     if (rawEmail.length > 254) return new Response(JSON.stringify({ error: "Email must be 254 characters or less" }), { status: 400, headers: { "Content-Type": "application/json" } });
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rawEmail)) return new Response(JSON.stringify({ error: "Invalid email" }), { status: 400, headers: { "Content-Type": "application/json" } });
+    if (!emailRegex.test(rawEmail)) return new Response(JSON.stringify({ error: "Invalid email" }), { status: 400, headers: { "Content-Type": "application/json" } });
     if (/https?:\/\//i.test(rawEmail)) return new Response(JSON.stringify({ error: "Invalid email" }), { status: 400, headers: { "Content-Type": "application/json" } });
     if (!env.EMAILOCTOPUS_API_KEY || !env.EMAILOCTOPUS_LIST_ID) {
       return new Response(JSON.stringify({ error: "Newsletter not configured" }), { status: 500, headers: { "Content-Type": "application/json" } });

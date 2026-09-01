@@ -50,6 +50,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const getContactRL = () => { try { return JSON.parse(localStorage.getItem("contact:rl") || "null"); } catch { return null; } };
   const setContactRL = (v) => { try { localStorage.setItem("contact:rl", JSON.stringify(v)); } catch {} };
   const canContactSend = () => { const rl = getContactRL(); if (!rl) return true; if (Date.now() > rl.until) { try { localStorage.removeItem("contact:rl"); } catch {} return true; } return rl.count < CONTACT_LIMIT; };
+  const blocked = ['exe','bat','sh','msi','dmg','dll','so','zip','rar','tar','gz','7z','js','mjs','cjs','ts','tsx','py','php','pl','rb','rs','go','java','c','cpp','cs','html','htm','css','svg','png','jpg','jpeg','gif','webp','bmp','ico','tiff','psd','ai','sketch','ps1','cmd','com','scr','vbs','jar','apk','ipa'];
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const allowedSubjects = ["Booking / Performance", "Collaboration", "Brand / Commercial", "Press / Media", "General Enquiries"];
+  const containsHarmful = (s) => {
+    if (!s) return false;
+    if (/<\s*(script|iframe|object|embed|form|img|svg|link|style|meta|base)\b/i.test(s)) return true;
+    if (/javascript\s*:/i.test(s) || /data\s*:\s*text\/html/i.test(s) || /vbscript\s*:/i.test(s)) return true;
+    if (/on\w+\s*=\s*["']?[^"'\s>]+/i.test(s)) return true;
+    if (/```|<\s*code\b/i.test(s)) return true;
+    const re = new RegExp(`(?:https?:\\/\\/|www\\.)[^\\s]+\\.(${blocked.join('|')})(?:[?#][^\\s]*)?\\b`, 'i');
+    return re.test(s);
+  };
 
   if (contactForm) {
     const messageField = document.getElementById('contact-message');
@@ -102,20 +114,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }, 60000);
 
-    const containsHarmful = (s) => {
-      if (!s) return false;
-      if (/<\s*(script|iframe|object|embed|form|img|svg|link|style|meta|base)\b/i.test(s)) return true;
-      if (/javascript\s*:/i.test(s) || /data\s*:\s*text\/html/i.test(s)) return true;
-      if (/on\w+\s*=\s*["']?/i.test(s)) return true;
-      if (/```|<\s*code\b/i.test(s)) return true;
-      const blocked = ['exe','bat','sh','msi','dmg','dll','zip','rar','tar','gz','7z','js','mjs','cjs','ts','tsx','py','php','pl','rb','rs','go','java','c','cpp','cs','html','htm','css','svg','png','jpg','jpeg','gif','webp','bmp','ico'];
-      const re = new RegExp(`(?:https?:\\/\\/|www\\.)[^\\s]+\\.(${blocked.join('|')})(?:[?#][^\\s]*)?\\b`, 'i');
-      return re.test(s);
-    };
-
     contactForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const allowedSubjects = ["Booking / Performance", "Collaboration", "Brand / Commercial", "Press / Media", "General Enquiries"];
       const nameInput = contactForm.querySelector('#contact-name');
       const emailInput = contactForm.querySelector('#contact-email');
       const subjectInput = contactForm.querySelector('#contact-subject');
@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (nameVal.length > 80) { nameInput.setCustomValidity("Name must be 80 characters or less"); nameInput.reportValidity(); return; } else nameInput.setCustomValidity("");
       if (emailVal.length > 254) { emailInput.setCustomValidity("Email must be 254 characters or less"); emailInput.reportValidity(); return; } else emailInput.setCustomValidity("");
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) { emailInput.setCustomValidity("Invalid email"); emailInput.reportValidity(); return; } else emailInput.setCustomValidity("");
+      if (!emailRegex.test(emailVal)) { emailInput.setCustomValidity("Invalid email"); emailInput.reportValidity(); return; } else emailInput.setCustomValidity("");
       if (!allowedSubjects.includes(subjectVal)) { subjectInput.setCustomValidity("Please select a subject"); subjectInput.reportValidity(); return; } else subjectInput.setCustomValidity("");
       if (msgVal.length > 1000) { if (messageField) { messageField.setCustomValidity("Message must be 1000 characters or less"); messageField.reportValidity(); } return; } else if (messageField) messageField.setCustomValidity("");
       for (const [field, val, el] of [["name", nameVal, nameInput], ["subject", subjectVal, subjectInput], ["message", msgVal, messageField]]) {
@@ -203,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const email = newsletterForm.querySelector('input[type="email"]');
       const emailVal = email.value.trim();
       if (emailVal.length > 254) { email.setCustomValidity("Email too long"); email.reportValidity(); return; }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) { email.setCustomValidity("Invalid email"); email.reportValidity(); return; }
+      if (!emailRegex.test(emailVal)) { email.setCustomValidity("Invalid email"); email.reportValidity(); return; }
       if (/https?:\/\//i.test(emailVal)) { email.setCustomValidity("Links not allowed in email"); email.reportValidity(); return; }
       email.setCustomValidity("");
       const btn = newsletterForm.querySelector('button[type="submit"]');

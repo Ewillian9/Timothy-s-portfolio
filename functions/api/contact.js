@@ -1,3 +1,4 @@
+import { emailRegex, allowedSubjects, containsHarmful } from '../../utils/validation.js';
 export async function onRequestPost({ request, env }) {
   try {
     const { name, email, subject: userSubject, message } = await request.json();
@@ -6,24 +7,11 @@ export async function onRequestPost({ request, env }) {
     }
 
     const escapeHtml = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#x27;");
-    const containsHarmful = (s) => {
-      if (!s) return false;
-      if (/<\s*(script|iframe|object|embed|form|img|svg|link|style|meta|base)\b/i.test(s)) return true;
-      if (/javascript\s*:/i.test(s) || /data\s*:\s*text\/html/i.test(s) || /vbscript\s*:/i.test(s)) return true;
-      if (/on\w+\s*=\s*["']?[^"'\s>]+/i.test(s)) return true;
-      if (/```|<\s*code\b/i.test(s)) return true;
-      const blocked = ['exe','bat','sh','msi','dmg','dll','so','zip','rar','tar','gz','7z','js','mjs','cjs','ts','tsx','py','php','pl','rb','rs','go','java','c','cpp','cs','html','htm','css','svg','png','jpg','jpeg','gif','webp','bmp','ico','tiff','psd','ai','sketch','ps1','cmd','com','scr','vbs','jar','apk','ipa'];
-      const urlRe = new RegExp(`(?:https?:\\/\\/|www\\.)[^\\s]+\\.(${blocked.join('|')})(?:[?#][^\\s]*)?\\b`, 'i');
-      if (urlRe.test(s)) return true;
-      return false;
-    };
-
-    const allowedSubjects = ["Booking / Performance", "Collaboration", "Brand / Commercial", "Press / Media", "General Enquiries"];
     if (!allowedSubjects.includes(userSubject)) {
       return new Response(JSON.stringify({ error: "Invalid subject" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
     // basic email format
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (!emailRegex.test(email)) {
       return new Response(JSON.stringify({ error: "Invalid email format" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
     // block harmful content (links to exe/image/code, script, etc.)
