@@ -1,23 +1,23 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Mobile Burger Menu
+  // Mobile Burger Menu - single DOM socials
   const burgerBtn = document.querySelector('.burger-btn');
-  const mobileMenu = document.querySelector('.mobile-menu');
+  const socialsTop = document.getElementById('socials');
 
-  if (burgerBtn && mobileMenu) {
+  if (burgerBtn && socialsTop) {
     burgerBtn.addEventListener('click', () => {
-      const isOpen = mobileMenu.classList.toggle('is-open');
+      const isOpen = socialsTop.classList.toggle('is-open');
       burgerBtn.classList.toggle('is-active');
       burgerBtn.setAttribute('aria-expanded', isOpen);
-      mobileMenu.setAttribute('aria-hidden', !isOpen);
+      socialsTop.setAttribute('aria-hidden', !isOpen);
     });
 
-    // Close menu when clicking in the empty space (backdrop)
-    mobileMenu.addEventListener('click', (e) => {
-      if (e.target === mobileMenu) {
-        mobileMenu.classList.remove('is-open');
+    // Close when clicking backdrop
+    socialsTop.addEventListener('click', (e) => {
+      if (e.target === socialsTop) {
+        socialsTop.classList.remove('is-open');
         burgerBtn.classList.remove('is-active');
         burgerBtn.setAttribute('aria-expanded', 'false');
-        mobileMenu.setAttribute('aria-hidden', 'true');
+        socialsTop.setAttribute('aria-hidden', 'true');
       }
     });
   }
@@ -50,8 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const getContactRL = () => { try { return JSON.parse(localStorage.getItem("contact:rl") || "null"); } catch { return null; } };
   const setContactRL = (v) => { try { localStorage.setItem("contact:rl", JSON.stringify(v)); } catch {} };
   const canContactSend = () => { const rl = getContactRL(); if (!rl) return true; if (Date.now() > rl.until) { try { localStorage.removeItem("contact:rl"); } catch {} return true; } return rl.count < CONTACT_LIMIT; };
-  const contactRemainingMs = () => { const rl = getContactRL(); return rl ? Math.max(0, rl.until - Date.now()) : 0; };
-  const formatRemaining = (ms) => { const h = Math.floor(ms / 3600000); const m = Math.floor((ms % 3600000) / 60000); return h > 0 ? `${h}h ${m}m` : `${m}m`; };
 
   if (contactForm) {
     const messageField = document.getElementById('contact-message');

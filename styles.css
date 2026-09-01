@@ -75,10 +75,6 @@ main {
   display: none;
 }
 
-.mobile-menu {
-  display: none;
-}
-
 .logo img {
   height: 42px;
   width: auto;
@@ -129,7 +125,7 @@ main {
 .section-title {
   margin-bottom: 1.5rem;
   text-align: center;
-  font-weight: 300;
+  font-weight: 700;
   letter-spacing: 0.25em;
   text-transform: uppercase;
 }
@@ -526,10 +522,6 @@ h2 {
     height: 32px;
   }
 
-  .socials-top {
-    display: none;
-  }
-
   .burger-btn {
     display: flex;
     flex-direction: column;
@@ -570,7 +562,7 @@ h2 {
     transform: translateY(-7px) rotate(-45deg);
   }
 
-  .mobile-menu {
+  .socials-top {
     position: fixed;
     top: 0;
     left: 0;
@@ -580,6 +572,8 @@ h2 {
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
     justify-content: center;
     align-items: center;
     z-index: 999;
@@ -588,31 +582,22 @@ h2 {
     transition: opacity 0.3s ease;
   }
 
-  .mobile-menu.is-open {
+  .socials-top.is-open {
     opacity: 1;
     pointer-events: auto;
   }
 
-  .mobile-menu-content {
-    display: flex;
-    flex-direction: column;
-    gap: 2.5rem;
-    align-items: center;
-  }
-
-  .mobile-menu-content a {
+  .socials-top.is-open a {
     opacity: 0.85;
     transition: opacity 0.2s ease, transform 0.2s ease;
-    display: flex;
-    align-items: center;
   }
 
-  .mobile-menu-content a:hover {
+  .socials-top.is-open a:hover {
     opacity: 1;
     transform: scale(1.1);
   }
 
-  .mobile-menu-content a img {
+  .socials-top.is-open a img {
     width: 32px;
     height: 32px;
     display: block;
