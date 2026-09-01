@@ -106,3 +106,18 @@ export async function onRequestPost({ request, env }) {
     return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: { "Content-Type": "application/json" } });
   }
 }
+export async function onRequestGet({ request, env }) {
+  try {
+    if (!env.CONTACT_RL) return new Response(JSON.stringify({ limited: false }), { status: 200, headers: { "Content-Type": "application/json" } });
+    const ip = request.headers.get("CF-Connecting-IP") || request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    const key = `contact:ip:${ip}`;
+    const rl = await env.CONTACT_RL.get(key, "json");
+    const now = Date.now();
+    if (rl && rl.count >= 2 && now < rl.until) {
+      return new Response(JSON.stringify({ limited: true, count: rl.count, until: rl.until, retryAfter: Math.ceil((rl.until - now) / 1000) }), { status: 200, headers: { "Content-Type": "application/json" } });
+    }
+    return new Response(JSON.stringify({ limited: false }), { status: 200, headers: { "Content-Type": "application/json" } });
+  } catch (e) {
+    return new Response(JSON.stringify({ limited: false }), { status: 200, headers: { "Content-Type": "application/json" } });
+  }
+}

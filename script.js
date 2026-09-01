@@ -22,6 +22,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Client-side rate limit: 2 sends / 12h via localStorage + server KV (least writes)
+  const CONTACT_LIMIT = 2;
+  const CONTACT_WINDOW_MS = 12 * 60 * 60 * 1000;
+  const getContactRL = () => { try { return JSON.parse(localStorage.getItem("contact:rl") || "null"); } catch { return null; } };
+  const setContactRL = (v) => { try { localStorage.setItem("contact:rl", JSON.stringify(v)); } catch {} };
+  const canContactSend = () => { const rl = getContactRL(); if (!rl) return true; if (Date.now() > rl.until) { try { localStorage.removeItem("contact:rl"); } catch {} return true; } return rl.count < CONTACT_LIMIT; };
+
   // Contact accordion
   const contactToggle = document.querySelector('.contact-toggle');
   const contactPanel = document.getElementById('contact-panel');
@@ -31,8 +38,15 @@ document.addEventListener('DOMContentLoaded', () => {
       contactToggle.setAttribute('aria-expanded', String(!isOpen));
       if (!isOpen) {
         contactPanel.hidden = false;
-        // allow hidden removal to paint before transition
         requestAnimationFrame(() => contactPanel.classList.add('is-open'));
+        // check server-side KV (in case localStorage cleared) → re-lock button
+        fetch('/api/contact', { method: 'GET' }).then(r => r.json()).then(data => {
+          if (data.limited) {
+            setContactRL({ count: data.count, until: data.until });
+            const btn = document.querySelector('#contact-form button[type="submit"]');
+            if (btn) { btn.disabled = true; btn.textContent = "I'll be in touch"; btn.classList.add("is-limited"); }
+          }
+        }).catch(() => {});
       } else {
         contactPanel.classList.remove('is-open');
         contactPanel.addEventListener('transitionend', () => {
@@ -44,12 +58,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Contact form - send without mail client via Cloudflare Worker/Function
   const contactForm = document.getElementById('contact-form');
-  // Client-side rate limit: 2 sends / 12h via localStorage (UX only, server enforces)
-  const CONTACT_LIMIT = 2;
-  const CONTACT_WINDOW_MS = 12 * 60 * 60 * 1000;
-  const getContactRL = () => { try { return JSON.parse(localStorage.getItem("contact:rl") || "null"); } catch { return null; } };
-  const setContactRL = (v) => { try { localStorage.setItem("contact:rl", JSON.stringify(v)); } catch {} };
-  const canContactSend = () => { const rl = getContactRL(); if (!rl) return true; if (Date.now() > rl.until) { try { localStorage.removeItem("contact:rl"); } catch {} return true; } return rl.count < CONTACT_LIMIT; };
   const blocked = ['exe','bat','sh','msi','dmg','dll','so','zip','rar','tar','gz','7z','js','mjs','cjs','ts','tsx','py','php','pl','rb','rs','go','java','c','cpp','cs','html','htm','css','svg','png','jpg','jpeg','gif','webp','bmp','ico','tiff','psd','ai','sketch','ps1','cmd','com','scr','vbs','jar','apk','ipa'];
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const allowedSubjects = ["Booking / Performance", "Collaboration", "Brand / Commercial", "Press / Media", "General Enquiries"];
