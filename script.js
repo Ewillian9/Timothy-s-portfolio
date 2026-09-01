@@ -278,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { href: 'https://open.spotify.com/track/0f858Tv5lqvBkJzZuuSHed', icon: 'assets/icons/spotify.svg', alt: 'Spotify' },
         { href: 'https://music.apple.com/us/song/arctic-eyes/6789503937', icon: 'assets/icons/apple-music.svg', alt: 'Apple Music' },
         { href: 'https://music.youtube.com/watch?v=OPV2sNcmSuc', icon: 'assets/icons/youtube-music.svg', alt: 'YouTube Music' },
-        { href: 'https://music.amazon.com/albums/B0HBBR9KPN', icon: 'assets/icons/amazon-music.svg', alt: 'Amazon Music' },
+        { href: 'https://music.amazon.com/tracks/B0H8D6M5YN', icon: 'assets/icons/amazon-music.svg', alt: 'Amazon Music' },
         { href: 'https://www.deezer.com/us/album/1025788072', icon: 'assets/icons/deezer.svg', alt: 'Deezer' },
         { href: 'https://tidal.com/album/541878355', icon: 'assets/icons/tidal.svg', alt: 'Tidal' },
       ]
