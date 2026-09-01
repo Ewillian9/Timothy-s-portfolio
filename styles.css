@@ -114,7 +114,7 @@ main {
 .hero {
   min-height: 90vh;
   margin-top: 3rem;
-  background: url("./assets/images/Greenfiestaevenpic_005.png") center / cover no-repeat;
+  background: url("./assets/images/Greenfiestaevenpic_005.avif") center / cover no-repeat;
   -webkit-mask-image:
     linear-gradient(to bottom, transparent 0%, #0a0a0a 15%, #0a0a0a 85%, transparent 100%),
     linear-gradient(to right, transparent 0%, #0a0a0a 12%, #0a0a0a 88%, transparent 100%);
@@ -765,10 +765,6 @@ h2 {
 }
 
 @media (min-width: 768px) {
-  .hero {
-    background: url("./assets/images/Greenfiestaevenpic_005.png") center / cover no-repeat;
-  }
-
   .tvsl {
     flex-direction: row;
     text-align: left;
