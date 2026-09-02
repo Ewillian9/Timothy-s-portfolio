@@ -21,10 +21,11 @@ export async function onRequestPost({ request, env }) {
 
     const escapeHtml = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#x27;");
     const to = env.CONTACT_TO;
-    if (!to) return json({ error: "Contact not configured" }, 500);
+    if (!to) return json({ error: "Contact not configured - missing CONTACT_TO" }, 500);
+    if (!env.CONTACT_FROM_DOMAIN) return json({ error: "Contact not configured - missing CONTACT_FROM_DOMAIN" }, 500);
     const safeName = name.replace(/[\r\n"<>,;:\\]/g, "").trim().slice(0, 80) || "Website Contact";
     const sanitisedFull = email.toLowerCase().replace(/@/g, ".at.").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9.+]+/g, ".").replace(/^\.+|\.+$/g, "").replace(/\.{2,}/g, ".").slice(0, 40) || "contact";
-    const fromEmail = `contact+${sanitisedFull}@ewii.site`;
+    const fromEmail = `contact+${sanitisedFull}@${env.CONTACT_FROM_DOMAIN}`;
     const from = `${safeName} <${fromEmail}>`;
     const subject = userSubject;
     const text = message;
