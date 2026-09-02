@@ -56,9 +56,9 @@ export async function onRequestPost({ request, env }) {
     };
 
     if (env.EMAIL && env.EMAIL.send) {
-      const res = await env.EMAIL.send({ to, from, subject, text, html, replyTo: email });
+      await env.EMAIL.send({ to, from, subject, text, html, replyTo: email });
       await recordRateLimit();
-      return json({ ok: true, via: "binding", id: res.messageId });
+      return json({ ok: true });
     }
     if (env.CLOUDFLARE_ACCOUNT_ID && env.CLOUDFLARE_API_TOKEN) {
       const res = await fetch(`https://api.cloudflare.com/client/v4/accounts/${env.CLOUDFLARE_ACCOUNT_ID}/email/sending/send`, {
@@ -67,9 +67,9 @@ export async function onRequestPost({ request, env }) {
         body: JSON.stringify({ to, from, subject, text, html, reply_to: email }),
       });
       const data = await res.json();
-      if (!res.ok || !data.success) return json({ error: "Cloudflare Email API failed", detail: data }, 502);
+      if (!res.ok || !data.success) return json({ error: "Cloudflare Email API failed" }, 502);
       await recordRateLimit();
-      return json({ ok: true, via: "rest", result: data.result });
+      return json({ ok: true });
     }
     if (env.RESEND_API_KEY) {
       const res = await fetch("https://api.resend.com/emails", {
@@ -77,12 +77,9 @@ export async function onRequestPost({ request, env }) {
         headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json" },
         body: JSON.stringify({ from, to: [to], reply_to: email, subject, text }),
       });
-      if (!res.ok) {
-        const txt = await res.text();
-        return json({ error: "Resend failed", detail: txt }, 502);
-      }
+      if (!res.ok) return json({ error: "Resend failed" }, 502);
       await recordRateLimit();
-      return json({ ok: true, via: "resend" });
+      return json({ ok: true });
     }
     return json({ error: "No email service configured - add EMAIL binding or CLOUDFLARE_API_TOKEN+ACCOUNT_ID or RESEND_API_KEY" }, 500);
   } catch (e) {
