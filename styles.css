@@ -417,7 +417,7 @@ h2 {
   position: absolute;
   top: calc(50% - 14px);
   transform: translateY(-50%);
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(0, 0, 0, 0.7);
   border: none;
   color: #fff;
   width: 48px;
@@ -432,7 +432,7 @@ h2 {
 }
 
 .carousel-btn:hover {
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.5);
 }
 
 .carousel.is-playing .carousel-btn {
@@ -440,7 +440,7 @@ h2 {
 }
 
 .carousel.is-playing .carousel-btn:hover {
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.15);
 }
 
 .carousel-btn.prev {
