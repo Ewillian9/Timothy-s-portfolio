@@ -18,7 +18,7 @@ export async function onRequest({ request, env }) {
     });
     const data = await res.json().catch(() => ({}));
     if (res.ok) return json({ ok: true });
-    if (data.code === "MEMBER_EXISTS_WITH_EMAIL_ADDRESS") return json({ ok: true, already: true });
+    if (res.status === 409 || data.code === "MEMBER_EXISTS_WITH_EMAIL_ADDRESS" || data.detail === "Resource already exists.") return json({ error: "Already subscribed" }, 409);
     return json({ error: "EmailOctopus failed", detail: data }, 502);
   } catch (e) {
     return json({ error: e.message }, 500);

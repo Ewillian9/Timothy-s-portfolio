@@ -225,6 +225,12 @@ document.addEventListener('DOMContentLoaded', () => {
           body: JSON.stringify({ email_address: emailVal }),
         });
         const data = await res.json().catch(() => ({}));
+        if (res.status === 409) {
+          btn.textContent = 'Already subscribed';
+          btn.disabled = false;
+          setTimeout(() => { btn.textContent = orig; }, 6000);
+          return;
+        }
         if (!res.ok) throw new Error(data.error || data.errors?.[0] || 'Failed');
         btn.textContent = 'Subscribed ✓';
         newsletterForm.reset();
