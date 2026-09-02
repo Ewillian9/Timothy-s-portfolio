@@ -451,11 +451,12 @@ h2 {
 }
 
 .carousel-dot {
-  width: 6px;
-  height: 6px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: #333;
-  border: none;
+  border: 2px solid transparent;
+  background-clip: padding-box;
   cursor: pointer;
   padding: 0;
   transition: background 0.2s ease;
@@ -521,7 +522,7 @@ h2 {
     align-items: center;
     width: 100%;
     max-width: 100%;
-    padding: 1rem;
+    padding: calc(1rem + env(safe-area-inset-top, 0px)) 1rem 1rem;
     box-sizing: border-box;
   }
 
@@ -533,12 +534,12 @@ h2 {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    width: 22px;
-    height: 16px;
+    width: 44px;
+    height: 44px;
     background: transparent;
     border: none;
     cursor: pointer;
-    padding: 0;
+    padding: 14px 11px;
     margin-left: auto;
     z-index: 1000;
     opacity: 0.85;
@@ -620,9 +621,9 @@ h2 {
   }
 
   .carousel-btn {
-    width: 40px;
-    height: 40px;
-    top: calc(50% - 14px);
+    width: 44px;
+    height: 44px;
+    top: 50%;
     font-size: 16px;
   }
 
