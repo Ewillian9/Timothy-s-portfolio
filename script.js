@@ -377,5 +377,35 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.key === 'ArrowLeft') goTo(current - 1);
       if (e.key === 'ArrowRight') goTo(current + 1);
     });
+
+    // arrow transparency based on playing state
+    const carouselEl = document.querySelector('.carousel');
+    let playingCount = 0;
+    const setPlaying = (playing) => {
+      if (playing) playingCount++;
+      else playingCount = Math.max(0, playingCount - 1);
+      if (playingCount > 0) carouselEl.classList.add('is-playing');
+      else carouselEl.classList.remove('is-playing');
+    };
+    if (!window.YT) {
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      document.head.appendChild(tag);
+    }
+    window.onYouTubeIframeAPIReady = () => {
+      slides.forEach(slide => {
+        const iframe = slide.querySelector('iframe');
+        if (!iframe) return;
+        new YT.Player(iframe, {
+          events: {
+            'onStateChange': (e) => {
+              if (e.data === YT.PlayerState.PLAYING) setPlaying(true);
+              else if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED) setPlaying(false);
+            }
+          }
+        });
+      });
+    };
+    if (window.YT && window.YT.Player) window.onYouTubeIframeAPIReady();
   }
 });
