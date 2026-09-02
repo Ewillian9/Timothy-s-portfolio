@@ -315,7 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!platformsLogos) return;
     const data = platformsData[index];
     if (!data) return;
-    platformsLogos.innerHTML = data.links.map(l => `<a href="${l.href}" target="_blank" aria-label="${l.alt}"><img src="${l.icon}" alt="${l.alt}"></a>`).join('');
+    platformsLogos.innerHTML = data.links.map(l => `<a href="${l.href}" target="_blank" rel="noopener noreferrer" aria-label="${l.alt}"><img src="${l.icon}" alt="${l.alt}" width="28" height="28"></a>`).join('');
   }
 
   // create dots
