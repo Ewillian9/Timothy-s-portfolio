@@ -139,6 +139,32 @@ footer {
   color: #999;
 }
 
+.footer-socials {
+  display: flex;
+  gap: 1.4rem;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.footer-socials a {
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.footer-socials a:hover {
+  opacity: 1;
+}
+
+.footer-socials a img {
+  width: 18px;
+  height: 18px;
+  display: block;
+  filter: invert(1);
+}
+
 section {
   padding: 6rem 0.5rem;
   max-width: 980px;
