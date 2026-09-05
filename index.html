@@ -28,19 +28,33 @@
       <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "MusicGroup",
-        "name": "Isaac Timothy",
-        "url": "https://isaactimothy.lk/",
-        "image": "https://isaactimothy.lk/assets/images/Greenfiestaevenpic_005.avif",
-        "description": "Sri Lanka's rising rock artist, The Voice Sri Lanka S3 finalist. Debut single Akaalaye.",
-        "genre": ["Rock", "Pop"],
-        "sameAs": [
-          "https://open.spotify.com/artist/7pE23FSbgpV4hGmTIW6KuE",
-          "https://music.apple.com/us/artist/isaac-timothy/1043867556",
-          "https://www.instagram.com/isaactimothy.lk/",
-          "https://www.facebook.com/isaactimothy.lk/",
-          "https://www.youtube.com/@isaactimothy_lk",
-          "https://www.tiktok.com/@isaactimothy.lk"
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://isaactimothy.lk/#person",
+            "name": "Isaac Timothy",
+            "url": "https://isaactimothy.lk/",
+            "image": "https://isaactimothy.lk/assets/images/Greenfiestaevenpic_005.avif",
+            "jobTitle": "Singer-Songwriter",
+            "description": "Isaac Timothy is a Sri Lankan singer-songwriter and rock artist, and a finalist on The Voice Sri Lanka Season 3. His music blends rock and pop.",
+            "genre": ["Rock", "Pop"],
+            "sameAs": [
+              "https://open.spotify.com/artist/7pE23FSbgpV4hGmTIW6KuE",
+              "https://music.apple.com/us/artist/isaac-timothy/1043867556",
+              "https://www.instagram.com/isaactimothy.lk/",
+              "https://www.facebook.com/isaactimothy.lk/",
+              "https://www.youtube.com/@isaactimothy_lk",
+              "https://www.tiktok.com/@isaactimothy.lk"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://isaactimothy.lk/#website",
+            "name": "Isaac Timothy",
+            "url": "https://isaactimothy.lk/",
+            "description": "Official website of Isaac Timothy, Sri Lankan singer-songwriter and rock artist.",
+            "about": { "@id": "https://isaactimothy.lk/#person" }
+          }
         ]
       }
       </script>
