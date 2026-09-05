@@ -334,7 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
     slides.forEach(slide => {
       const iframe = slide.querySelector('iframe');
       if (iframe && iframe.contentWindow) {
-        iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+        iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', 'https://www.youtube-nocookie.com');
       }
     });
   }
@@ -384,21 +384,28 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.key === 'ArrowRight') goTo(current + 1);
     });
 
-    // arrow transparency based on playing state
+    // arrow transparency based on playing state (lazy-load YouTube API on first interaction)
     const carouselEl = document.querySelector('.carousel');
     let playingCount = 0;
+    let ytLoaded = false;
     const setPlaying = (playing) => {
       if (playing) playingCount++;
       else playingCount = Math.max(0, playingCount - 1);
       if (playingCount > 0) carouselEl.classList.add('is-playing');
       else carouselEl.classList.remove('is-playing');
     };
-    if (!window.YT) {
+    const loadYouTubeAPI = () => {
+      if (ytLoaded) return;
+      ytLoaded = true;
+      if (window.YT && window.YT.Player) { initYTPlayers(); return; }
       const tag = document.createElement('script');
       tag.src = 'https://www.youtube.com/iframe_api';
+      tag.async = true;
       document.head.appendChild(tag);
-    }
-    window.onYouTubeIframeAPIReady = () => {
+    };
+    window.onYouTubeIframeAPIReady = () => initYTPlayers();
+    const initYTPlayers = () => {
+      if (!window.YT || !window.YT.Player) return;
       slides.forEach(slide => {
         const iframe = slide.querySelector('iframe');
         if (!iframe) return;
@@ -412,6 +419,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       });
     };
-    if (window.YT && window.YT.Player) window.onYouTubeIframeAPIReady();
+    // load API only when carousel enters viewport or user interacts
+    const videosSection = document.getElementById('videos');
+    if (videosSection && 'IntersectionObserver' in window) {
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) { loadYouTubeAPI(); obs.disconnect(); }
+        });
+      }, { rootMargin: '200px' });
+      obs.observe(videosSection);
+    }
+    carouselEl.addEventListener('pointerdown', loadYouTubeAPI, { once: true });
   }
 });
